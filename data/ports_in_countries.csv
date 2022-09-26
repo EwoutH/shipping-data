@@ -1,0 +1,50 @@
+﻿Country;Port_of_City;Region;Type
+Argentina;Bahia;South America;T
+Argentina;Buenos Aires;South America;T
+Brasil;Pecem;South America;T
+Brasil;Fortaleza;South America;T
+Brasil;Natal;South America;T
+Brasil;Santos;South America;T
+Brasil;Paranaguá;South America;T
+Brasil;Itajai;South America;T
+Brasil;Rio de Janeiro;South America;T
+Brasil;Salvador;South America;T
+Brasil;Recife;South America;T
+Brasil;Vitoria da Conquista;South America;T
+Curaçao;Havanna;Carribean;T
+Curaçao;Willemstad;Carribean;T
+Chile;Arica;South America;T
+Chile;Santa Antonio;South America;T
+Chile;Callao ;South America;T
+Chile;Valparaiso;South America;T
+Chile;Coronel;South America;T
+Colombia;Santa Marta;South America;O
+Colombia;Cartagena;South America;O
+Colombia;Buenaventura;South America;O
+Colombia;Turbo;South America;O
+Costa Rica;Moín;Central America;T
+Costa Rica;Puerto Limón;Central America;T
+Dominican Republic;Caucedo;Carribean;T
+Ecuador;Manta;South America;T
+Ecuador;Guayaquil;South America;T
+Ecuador;Posorja;South America;T
+Guinea;Conakry;Africa;T
+Honduras;Cortes;Central America;T
+Jamaica;Kingston;Carribean;T
+Nigeria;Lekki;Africa;T
+Panama;Colon;Central America;T
+Panama;Balboa;Central America;T
+Peru;Callao;South America;O
+Peru;Paita;South America;O
+Peurto Rico;San Juan;Carribean;T
+South Africa;Durban;Africa;T
+Suriname;Duinkerke;South America;T
+Suriname;Paramaribo;South America;T
+Uruguay;Montevideo;South America;T
+Venezuela;Cabello;South America;T
+Netherlands;Rotterdam;Europe;A
+Netherlands;Amsterdam;Europe;A
+Netherlands;Vlissingen;Europe;A
+Belgium;Antwerp;Europe;A
+United Arab Emirates;Jebel Ali;Middle East;T
+China;Shanghai;Asia;T
