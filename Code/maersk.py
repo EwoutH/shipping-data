@@ -29,12 +29,22 @@ for i in list_xpath_routedetails:
 
 #Copy's the page to use in Beautifulsoup
 page_source = driver.page_source
-
-#Closes the webdriver after a few seconds
-time.sleep(5)
-driver.quit()
-
 soup = BeautifulSoup(page_source)
 
-print(soup)
+#Closes the webdriver after a few seconds
+driver.quit()
 
+routes = soup.find_all("div", class_="ptp-results__transport-plan")
+route = routes[0]
+
+origin = route.find("div", class_="ptp-results__transport-plan--item")
+
+origin = origin.find(class_="font--small").text
+
+print(origin)
+
+destination = route.find(class_="ptp-results__transport-plan--item-final")
+
+destination = destination.find(class_="font--small").text
+
+print(destination)
