@@ -74,6 +74,12 @@ def get_webpages2(od_ports, headless=True):
         i = 1
         while True: # Keep trying until successfully scraped
             try:
+                # If the driver too old, first restart the browser
+                if driver_age >= 4:
+                    driver.quit
+                    driver_age = 0
+                    driver = start_browser(url)
+
                 # Load the HTML page, if not done earlier by a browser start
                 if not already_got:
                     driver.get(url)
@@ -88,17 +94,9 @@ def get_webpages2(od_ports, headless=True):
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
                 sleeptime = max(10, sleeptime - 3)
-                # Print
+                # Print and sleep
                 print(f"Scraped route {n+1}/{len(u_od_zip)}, took {i} tries (sleeptime {sleeptime})")
-
-                # If the driver is old, refresh it and sleep, otherwise only sleep
-                if driver_age >= 4:
-                    driver.quit
-                    driver_age = 0
-                    sleep(random.uniform(sleeptime, sleeptime+2))
-                    driver = start_browser()
-                else:
-                    sleep(random.uniform(sleeptime, sleeptime+2))
+                sleep(random.uniform(sleeptime, sleeptime+2))
             except:
                 if i > 6 or sleeptime > 120:
                     print(f"Stopped after {i} sequential failed attempts. {n} routes successfully collected.")
@@ -112,7 +110,7 @@ def get_webpages2(od_ports, headless=True):
                     driver.quit()
                     driver_age = 0
                     sleep(random.uniform(sleeptime, sleeptime+2))
-                    driver = start_browser()
+                    driver = start_browser(url)
                 else:
                     sleep(random.uniform(sleeptime, sleeptime+2))
                 continue
