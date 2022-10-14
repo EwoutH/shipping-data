@@ -50,7 +50,7 @@ def get_webpages2(od_ports, headless=True):
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
-    s = Service("/usr/local/bin/chromedriver")
+    s = Service("/usr/local/share/chrome_driver")
 
     # Instantiate a webdriver
     driver = webdriver.Chrome(options=opts, service=s)
