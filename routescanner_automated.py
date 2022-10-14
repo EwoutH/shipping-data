@@ -92,7 +92,7 @@ def get_webpages2(od_ports, headless=True):
     ]
 
     for argument in lambda_options:
-        chrome_options.add_argument(argument)
+        opts.add_argument(argument)
     # Set the location of the webdriver
     s = Service("/usr/local/share/chrome_driver")
 
