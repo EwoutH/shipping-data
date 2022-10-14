@@ -76,7 +76,7 @@ def get_webpages2(od_ports, headless=True):
             try:
                 # If the driver too old, first restart the browser
                 if driver_age >= 4:
-                    driver.quit
+                    driver.quit()
                     driver_age = 0
                     driver = start_browser(url)
 
