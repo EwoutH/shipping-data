@@ -44,7 +44,7 @@ def get_webpages2(od_ports, headless=True):
     opts.add_argument('--remote-debugging-port=9222')
     opts.add_argument('--disable-gpu')
     opts.add_argument("--window-size=2880,2160")
-   
+
     # Some options to make Chrome (hopefully) more
     opts.add_argument('--disable-blink-features=AutomationControlled')
     opts.add_experimental_option('useAutomationExtension', False)
