@@ -112,7 +112,7 @@ def get_webpages2(od_ports, headless=True):
                     driver.quit()
                     driver_age = 0
                     sleep(random.uniform(sleeptime, sleeptime+2))
-                    start_browser()
+                    driver = start_browser()
                 else:
                     sleep(random.uniform(sleeptime, sleeptime+2))
                 continue
