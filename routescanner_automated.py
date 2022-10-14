@@ -52,7 +52,7 @@ def get_webpages2(od_ports, headless=True):
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
-    os.environ["WDM_PROGRESS_BAR"] = 0
+    os.environ["WDM_PROGRESS_BAR"] = '0'
     chrome_service = Service(ChromeDriverManager().install())
     already_got = False
     print("service started")
