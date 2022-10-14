@@ -52,8 +52,10 @@ def get_webpages2(od_ports, headless=True):
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
+    os.environ["WDM_PROGRESS_BAR"] = 0
     chrome_service = Service(ChromeDriverManager().install())
     already_got = False
+    print("service started")
 
     def start_browser(url):
         print("(Re)starting browser")
@@ -68,6 +70,7 @@ def get_webpages2(od_ports, headless=True):
         return driver
 
     driver = start_browser(urls[0])
+    print("browser started")
 
     soups = []
     sleeptime = 20
@@ -96,7 +99,7 @@ def get_webpages2(od_ports, headless=True):
                 print("sleep")
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
-                sleeptime = max(10, sleeptime - 3)
+                sleeptime = max(4, sleeptime - 3)
                 # Print and sleep
                 print(f"Scraped route {n+1}/{len(u_od_zip)}, took {i} tries (sleeptime {sleeptime})")
                 sleep(random.uniform(sleeptime, sleeptime+2))
