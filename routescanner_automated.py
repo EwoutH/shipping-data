@@ -53,10 +53,6 @@ def get_webpages2(od_ports, headless=True):
     # Set the location of the webdriver
     chrome_service = Service(ChromeDriverManager().install())
 
-    # Instantiate a webdriver
-    driver = webdriver.Chrome(options=opts, service=s)
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-
     def start_browser(url):
         print("(Re)starting browser")
         # Instantiate a webdriver
