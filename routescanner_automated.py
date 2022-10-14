@@ -38,7 +38,7 @@ def get_webpages2(od_ports, headless=False):
 
     # Instantiate options
     opts = Options()
-    opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+    #opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
     opts.add_argument("window-size=2880,2160")
     if headless:
         opts.headless = True
@@ -48,7 +48,7 @@ def get_webpages2(od_ports, headless=False):
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
-    s = Service(os.getcwd() + "/drivers/chromedriver.exe")
+    s = Service("/usr/local/share/chrome_driver")
 
     # Instantiate a webdriver
     driver = webdriver.Chrome(options=opts, service=s)
