@@ -35,7 +35,20 @@ def generate_urls2(od_ports=od_ports):
 def get_webpages2(od_ports, headless=True):
     urls = generate_urls2(od_ports)
     u_od_zip = list(zip(urls, od_ports))
-    
+
+    # Instantiate options
+    opts = Options()
+    opts.binary_location = "/usr/bin/google-chrome"
+    opts.add_argument('--remote-debugging-port=9222')
+    opts.add_argument('--disable-gpu')
+    opts.add_argument("window-size=2880,2160")
+    if headless:
+        opts.headless = True
+    # Some options to make Chrome (hopefully) more
+    opts.add_argument('--disable-blink-features=AutomationControlled')
+    opts.add_experimental_option('useAutomationExtension', False)
+    opts.add_experimental_option("excludeSwitches", ["enable-automation"])
+
     lambda_options = [
         '--autoplay-policy=user-gesture-required',
         '--disable-background-networking',
@@ -80,20 +93,6 @@ def get_webpages2(od_ports, headless=True):
 
     for argument in lambda_options:
         chrome_options.add_argument(argument)
-
-    # Instantiate options
-    opts = Options()
-    opts.binary_location = "/usr/bin/google-chrome"
-    opts.add_argument('--remote-debugging-port=9222')
-    opts.add_argument('--disable-gpu')
-    opts.add_argument("window-size=2880,2160")
-    if headless:
-        opts.headless = True
-    # Some options to make Chrome (hopefully) more
-    opts.add_argument('--disable-blink-features=AutomationControlled')
-    opts.add_experimental_option('useAutomationExtension', False)
-    opts.add_experimental_option("excludeSwitches", ["enable-automation"])
-
     # Set the location of the webdriver
     s = Service("/usr/local/share/chrome_driver")
 
