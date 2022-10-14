@@ -32,13 +32,15 @@ def generate_urls2(od_ports=od_ports):
     return [f"https://www.routescanner.com/voyages?limit={limit}&from={o_port}&fromType=locode&originsNearby=1&to={d_port}&toType=locode&destinationsNearby=1&departure={date}&sort={sort_on}&modalities={modalities}" for o_port, d_port in od_ports]
 
 
-def get_webpages2(od_ports, headless=False):
+def get_webpages2(od_ports, headless=True):
     urls = generate_urls2(od_ports)
     u_od_zip = list(zip(urls, od_ports))
 
     # Instantiate options
     opts = Options()
-    #opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+    opts.binary_location = "/usr/bin/google-chrome"
+    opts.add_argument('--remote-debugging-port=9222')
+    opts.add_argument('--disable-gpu')
     opts.add_argument("window-size=2880,2160")
     if headless:
         opts.headless = True
