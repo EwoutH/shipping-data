@@ -173,7 +173,7 @@ columns2 = ["Lead time", "Transfers", "Origin", "Destination", "Departure", "Arr
 connection_data = []
 
 # Scrape the webpage
-soups_ods_2 = get_webpages2(od_ports, headless=True)
+soups_ods_2 = get_webpages2(od_ports[:3], headless=True)
 # Get all the connection data, process them and add
 connection_data = get_route_data2(soups_ods_2)
 
