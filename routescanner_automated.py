@@ -1,6 +1,5 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.utils import ChromeType
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -52,7 +51,7 @@ def get_webpages2(od_ports, headless=True):
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
-    chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
+    chrome_service = Service(ChromeDriverManager().install())
 
     # Instantiate a webdriver
     driver = webdriver.Chrome(options=opts, service=s)
