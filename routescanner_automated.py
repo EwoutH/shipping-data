@@ -40,6 +40,7 @@ def get_webpages2(od_ports, headless=True):
     # Instantiate options
     opts = Options()
     opts.binary_location = "/usr/bin/google-chrome"
+    #opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
     opts.headless = True
     opts.add_argument('--remote-debugging-port=9222')
     opts.add_argument('--disable-gpu')
@@ -75,29 +76,31 @@ def get_webpages2(od_ports, headless=True):
         i = 1
         while True: # Keep trying until successfully scraped
             try:
+                print("start try")
                 # If the driver too old, first restart the browser
                 if driver_age >= 4:
                     driver.quit()
                     driver_age = 0
                     driver = start_browser(url)
-
+                print("driver get")
                 # Load the HTML page, if not done earlier by a browser start
                 if not already_got:
                     driver.get(url)
                 already_got = False
-
+                print("scrape")
                 # Wait until route data is loaded
                 elem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "voyages__NVlid ")))
-
+                print("parse")
                 # Parse processed webpage with BeautifulSoup and append to list
                 soups.append((BeautifulSoup(driver.page_source, features="lxml"), od))
-
+                print("sleep")
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
                 sleeptime = max(10, sleeptime - 3)
                 # Print and sleep
                 print(f"Scraped route {n+1}/{len(u_od_zip)}, took {i} tries (sleeptime {sleeptime})")
                 sleep(random.uniform(sleeptime, sleeptime+2))
+                print("success")
             except:
                 if i > 6 or sleeptime > 120:
                     print(f"Stopped after {i} sequential failed attempts. {n} routes successfully collected.")
