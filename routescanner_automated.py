@@ -65,7 +65,7 @@ def get_webpages2(od_ports, headless=True):
         driver.find_element(By.CLASS_NAME,"acceptButton__P2szu").click()
         return driver
 
-    start_browser(urls[0])
+    driver = start_browser(urls[0])
 
     soups = []
     sleeptime = 20
