@@ -52,6 +52,7 @@ def get_webpages2(od_ports, headless=True):
 
     # Set the location of the webdriver
     chrome_service = Service(ChromeDriverManager().install())
+    already_got = False
 
     def start_browser(url):
         print("(Re)starting browser")
@@ -89,7 +90,7 @@ def get_webpages2(od_ports, headless=True):
                 elem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "voyages__NVlid ")))
 
                 # Parse processed webpage with BeautifulSoup and append to list
-                soups.append((BeautifulSoup(driver.page_source), od))
+                soups.append((BeautifulSoup(driver.page_source, features="lxml"), od))
 
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
