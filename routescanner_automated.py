@@ -110,6 +110,7 @@ def get_webpages2(od_ports, headless=True):
                 # Restart browser after 2 unsuccessful tries, or if the driver gets old
                 if i >= 3 and i % 3 == 0 or driver_age >= 4:
                     driver.quit()
+                    driver_age = 0
                     sleep(random.uniform(sleeptime, sleeptime+2))
                     start_browser()
                 else:
