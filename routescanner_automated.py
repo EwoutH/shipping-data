@@ -1,4 +1,5 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -32,31 +33,30 @@ def generate_urls2(od_ports=od_ports):
     return [f"https://www.routescanner.com/voyages?limit={limit}&from={o_port}&fromType=locode&originsNearby=1&to={d_port}&toType=locode&destinationsNearby=1&departure={date}&sort={sort_on}&modalities={modalities}" for o_port, d_port in od_ports]
 
 
-def get_webpages2(od_ports, headless=False):
+def get_webpages2(od_ports, headless=True):
     urls = generate_urls2(od_ports)
     u_od_zip = list(zip(urls, od_ports))
 
     # Instantiate options
     opts = Options()
-    opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-    opts.add_argument("window-size=2880,2160")
-    if headless:
-        opts.headless = True
+    opts.binary_location = "/usr/bin/google-chrome"
+    opts.headless = True
+    opts.add_argument('--remote-debugging-port=9222')
+    opts.add_argument('--disable-gpu')
+    opts.add_argument("--window-size=2880,2160")
+
     # Some options to make Chrome (hopefully) more
     opts.add_argument('--disable-blink-features=AutomationControlled')
     opts.add_experimental_option('useAutomationExtension', False)
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
-    s = Service(os.getcwd() + "/drivers/chromedriver.exe")
-
-    # Instantiate a webdriver
-    driver = webdriver.Chrome(options=opts, service=s)
+    chrome_service = Service(ChromeDriverManager().install())
 
     def start_browser(url):
         print("(Re)starting browser")
         # Instantiate a webdriver
-        driver = webdriver.Chrome(options=opts, service=s)
+        driver = webdriver.Chrome(options=opts, service=chrome_service)
         # Load the HTML page
         driver.get(url)
         already_got = True
@@ -65,7 +65,7 @@ def get_webpages2(od_ports, headless=False):
         driver.find_element(By.CLASS_NAME,"acceptButton__P2szu").click()
         return driver
 
-    start_browser(urls[0])
+    driver = start_browser(urls[0])
 
     soups = []
     sleeptime = 20
@@ -74,6 +74,12 @@ def get_webpages2(od_ports, headless=False):
         i = 1
         while True: # Keep trying until successfully scraped
             try:
+                # If the driver too old, first restart the browser
+                if driver_age >= 4:
+                    driver.quit()
+                    driver_age = 0
+                    driver = start_browser(url)
+
                 # Load the HTML page, if not done earlier by a browser start
                 if not already_got:
                     driver.get(url)
@@ -88,17 +94,9 @@ def get_webpages2(od_ports, headless=False):
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
                 sleeptime = max(10, sleeptime - 3)
-                # Print
+                # Print and sleep
                 print(f"Scraped route {n+1}/{len(u_od_zip)}, took {i} tries (sleeptime {sleeptime})")
-
-                # If the driver is old, refresh it and sleep, otherwise only sleep
-                if driver_age >= 4:
-                    driver.quit
-                    driver_age = 0
-                    sleep(random.uniform(sleeptime, sleeptime+2))
-                    driver = start_browser()
-                else:
-                    sleep(random.uniform(sleeptime, sleeptime+2))
+                sleep(random.uniform(sleeptime, sleeptime+2))
             except:
                 if i > 6 or sleeptime > 120:
                     print(f"Stopped after {i} sequential failed attempts. {n} routes successfully collected.")
@@ -110,8 +108,9 @@ def get_webpages2(od_ports, headless=False):
                 # Restart browser after 2 unsuccessful tries, or if the driver gets old
                 if i >= 3 and i % 3 == 0 or driver_age >= 4:
                     driver.quit()
+                    driver_age = 0
                     sleep(random.uniform(sleeptime, sleeptime+2))
-                    start_browser()
+                    driver = start_browser(url)
                 else:
                     sleep(random.uniform(sleeptime, sleeptime+2))
                 continue
