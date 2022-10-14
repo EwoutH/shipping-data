@@ -1,4 +1,6 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.utils import ChromeType
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -39,70 +41,27 @@ def get_webpages2(od_ports, headless=True):
     # Instantiate options
     opts = Options()
     opts.binary_location = "/usr/bin/google-chrome"
+    opts.headless = True
     opts.add_argument('--remote-debugging-port=9222')
     opts.add_argument('--disable-gpu')
-    opts.add_argument("window-size=2880,2160")
-    if headless:
-        opts.headless = True
+    opts.add_argument("--window-size=2880,2160")
+   
     # Some options to make Chrome (hopefully) more
     opts.add_argument('--disable-blink-features=AutomationControlled')
     opts.add_experimental_option('useAutomationExtension', False)
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
-    lambda_options = [
-        '--autoplay-policy=user-gesture-required',
-        '--disable-background-networking',
-        '--disable-background-timer-throttling',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-breakpad',
-        '--disable-client-side-phishing-detection',
-        '--disable-component-update',
-        '--disable-default-apps',
-        '--disable-dev-shm-usage',
-        '--disable-domain-reliability',
-        '--disable-extensions',
-        '--disable-features=AudioServiceOutOfProcess',
-        '--disable-hang-monitor',
-        '--disable-ipc-flooding-protection',
-        '--disable-notifications',
-        '--disable-offer-store-unmasked-wallet-cards',
-        '--disable-popup-blocking',
-        '--disable-print-preview',
-        '--disable-prompt-on-repost',
-        '--disable-renderer-backgrounding',
-        '--disable-setuid-sandbox',
-        '--disable-speech-api',
-        '--disable-sync',
-        '--disk-cache-size=33554432',
-        '--hide-scrollbars',
-        '--ignore-gpu-blacklist',
-        '--ignore-certificate-errors',
-        '--metrics-recording-only',
-        '--mute-audio',
-        '--no-default-browser-check',
-        '--no-first-run',
-        '--no-pings',
-        '--no-sandbox',
-        '--no-zygote',
-        '--password-store=basic',
-        '--use-gl=swiftshader',
-        '--use-mock-keychain',
-        '--single-process',
-        '--headless',
-    ]
-
-    for argument in lambda_options:
-        opts.add_argument(argument)
     # Set the location of the webdriver
-    s = Service("/usr/local/share/chrome_driver")
+    chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
     # Instantiate a webdriver
     driver = webdriver.Chrome(options=opts, service=s)
+    driver = webdriver.Chrome(ChromeDriverManager().install())
 
     def start_browser(url):
         print("(Re)starting browser")
         # Instantiate a webdriver
-        driver = webdriver.Chrome(options=opts, service=s)
+        driver = webdriver.Chrome(options=opts, service=chrome_service)
         # Load the HTML page
         driver.get(url)
         already_got = True
