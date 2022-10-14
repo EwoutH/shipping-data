@@ -25,4 +25,4 @@ jobs:
       with:
         branch: "routescanner-data"
         branch-suffix: "timestamp"
-        title: Add Routescanner data
+        title: "Add Routescanner data"
