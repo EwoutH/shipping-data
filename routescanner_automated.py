@@ -95,11 +95,11 @@ def get_webpages2(od_ports, headless=True):
                 elem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "voyages__NVlid ")))
                 print("parse")
                 # Parse processed webpage with BeautifulSoup and append to list
-                soups.append((BeautifulSoup(driver.page_source, features="lxml"), od))
+                soups.append((BeautifulSoup(driver.page_source, features="html.parser"), od))
                 print("sleep")
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
-                sleeptime = max(4, sleeptime - 3)
+                sleeptime = max(7, sleeptime - 3)
                 # Print and sleep
                 print(f"Scraped route {n+1}/{len(u_od_zip)}, took {i} tries (sleeptime {sleeptime})")
                 sleep(random.uniform(sleeptime, sleeptime+2))
