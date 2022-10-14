@@ -40,6 +40,7 @@ def get_webpages2(od_ports, headless=True):
     # Instantiate options
     opts = Options()
     opts.binary_location = "/usr/bin/google-chrome"
+    #opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
     opts.headless = True
     opts.add_argument('--remote-debugging-port=9222')
     opts.add_argument('--disable-gpu')
@@ -51,6 +52,7 @@ def get_webpages2(od_ports, headless=True):
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 
     # Set the location of the webdriver
+    os.environ["WDM_PROGRESS_BAR"] = '0'
     chrome_service = Service(ChromeDriverManager().install())
     already_got = False
 
@@ -80,21 +82,17 @@ def get_webpages2(od_ports, headless=True):
                     driver.quit()
                     driver_age = 0
                     driver = start_browser(url)
-
                 # Load the HTML page, if not done earlier by a browser start
                 if not already_got:
                     driver.get(url)
                 already_got = False
-
                 # Wait until route data is loaded
                 elem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "voyages__NVlid ")))
-
                 # Parse processed webpage with BeautifulSoup and append to list
-                soups.append((BeautifulSoup(driver.page_source, features="lxml"), od))
-
+                soups.append((BeautifulSoup(driver.page_source, features="html.parser"), od))
                 # Increase the driver age and decrease the sleeptime
                 driver_age += 1
-                sleeptime = max(10, sleeptime - 3)
+                sleeptime = max(7, sleeptime - 3)
                 # Print and sleep
                 print(f"Scraped route {n+1}/{len(u_od_zip)}, took {i} tries (sleeptime {sleeptime})")
                 sleep(random.uniform(sleeptime, sleeptime+2))
