@@ -1,5 +1,5 @@
 # Shipping data
-This repository contains a public collection of shipping data from South Africa to The Netherlands and Belgium, and the tools for obtaining this data.
+This repository contains a public collection of shipping data from South America to The Netherlands and Belgium, and the tools for obtaining this data.
 
 ## Repository structure
 The repository is structured as follows:
