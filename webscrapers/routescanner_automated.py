@@ -42,7 +42,8 @@ def get_webpages2(od_ports, headless=True):
     opts = Options()
     opts.binary_location = "/usr/bin/google-chrome"
     #opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-    opts.headless = True
+    if headless:
+        opts.headless = True
     opts.add_argument('--remote-debugging-port=9222')
     opts.add_argument('--disable-gpu')
     opts.add_argument("--window-size=2880,2160")
@@ -183,5 +184,5 @@ connection_df = pd.DataFrame(connection_data, columns=columns2)
 print(f"Done. DataFrame has {connection_df.index.size} entries")
 
 # Save as Pickle and CSV
-connection_df.to_pickle(f"pickles/connections_{date}.pickle")
-connection_df.to_csv(f"data/connections_{date}.csv")
+connection_df.to_pickle(f"../pickles/routescanner_daily/connections_{date}.pickle")
+connection_df.to_csv(f"../data/routescanner_daily/connections_{date}.csv")
