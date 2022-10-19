@@ -24,13 +24,14 @@ print(today)
 
 # Define search criteria
 limit = 100
-sort_on = "transfers"
-modalities = "sea"
-date = today
+date = today             # Change this to anything later than today, in "YYYY-MM-DD" format
+sort_on = "transfers"    # Sort options (str): "emission_co2", "transfers", "arrival", "duration"
+modalities = ["sea"]     # Modalities options (list): ["sea", "barge", "rail", "truck"]
+modalaties_string = "%2C".join(modalities)
 
 # Create list of URLs to scrape
 def generate_urls2(od_ports=od_ports):
-    return [f"https://www.routescanner.com/voyages?limit={limit}&from={o_port}&fromType=locode&originsNearby=1&to={d_port}&toType=locode&destinationsNearby=1&departure={date}&sort={sort_on}&modalities={modalities}" for o_port, d_port in od_ports]
+    return [f"https://www.routescanner.com/voyages?limit={limit}&from={o_port}&fromType=locode&originsNearby=1&to={d_port}&toType=locode&destinationsNearby=1&departure={date}&sort={sort_on}&modalities={modalaties_string}" for o_port, d_port in od_ports]
 
 
 def get_webpages2(od_ports, headless=True):
