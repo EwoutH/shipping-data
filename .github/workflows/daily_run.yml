@@ -1,13 +1,14 @@
 # This workflows starts scraping Routescanner each day at 06:00 UTC, and opens a PR to merge the gathered data
 
-name: Scrape routescanner
+name: Scrape Routescanner and MSC daily
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 5 * * *'
   push:
     paths:
      - ".github/workflows/routescanner_daily.yml"
      - "routescanner_automated.py"
+     - "msc_automated.py"
   workflow_dispatch:
 
 jobs:
@@ -28,3 +29,21 @@ jobs:
         branch: "routescanner-data"
         branch-suffix: "timestamp"
         title: "Add Routescanner data"
+
+  msc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - run: pip install -U pip wheel setuptools
+    - run: pip install -U selenium beautifulsoup4 pandas numpy packaging
+    - run: pip install git+https://github.com/SergeyPirogov/webdriver_manager@master
+    - run: python msc_automated.py
+      working-directory: ./webscrapers
+    - uses: peter-evans/create-pull-request@v4
+      with:
+        branch: "msc-data"
+        branch-suffix: "timestamp"
+        title: "Add MSC data"
