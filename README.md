@@ -31,6 +31,14 @@ The ports are listed in [UN/LOCODE](https://unece.org/trade/cefact/unlocode-code
 
 For the full documentation, see [`docs/routescanner.md`](docs/routescanner.md), as well as the inline comments.
 
+### MSC
+
+An initial version of the MSC webscraper is available at [`webscrapers/msc_automated.py`](webscrapers/msc_automated.py). It scraped the same 130 port-combinations as the Routescanner scraper from the MSC schedule (https://www.msc.com/en/search-a-schedule).
+
+Initial data is available in CSV and Pickle form at [`data/msc_daily`](data/msc_daily) and [`pickles/msc_daily`](pickles/msc_daily). An experimental notebook can be found at [`notebooks/scraping_msc.ipynb`](notebooks/scraping_msc.ipynb).
+
+It's in prototype state, with a lot of open bugs and unwanted behaviour. Data collected will be incomplete.
+
 ## License
 As for now, all code in this repository is licensed under the GPL-3.0 license. At a later moment in this project this may change to a more permissive license.
 
