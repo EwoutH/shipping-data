@@ -171,14 +171,14 @@ def get_connection_data(soups):
             arrival_terminal = connection.find_all("span", {"x-text": "getLegSequenceValue(entry, 'ArrivalEquipmentHandlingFacilityName')"})[-1].text
             arrival_time = connection.find_all("span", {"x-text": "getLegSequenceValue(entry, 'EstimatedArrivalTimeFormatted')"})[-1].text
 
-            new_connection_data = [d, departure_port, departure_terminal, o, arrival_port, arrival_terminal, departure_time, arrival_time, transit_time, service_name, co2_footprint, vessel_name, voyage_no, vessel_build_year, vessel_flag, vessel_imo_code]
+            new_connection_data = [o, departure_port, departure_terminal, d, arrival_port, arrival_terminal, departure_time, arrival_time, transit_time, service_name, co2_footprint, vessel_name, voyage_no, vessel_build_year, vessel_flag, vessel_imo_code]
             connection_data.append(new_connection_data)
 
     return connection_data
 
 
 # Define dict keys / dataframe columns
-columns = ["Departure code", "Departure port", "Departure terminal", "Arrival code", "Arrival port", "Arrival terminal", "Departure time", "Arrival time", "Transit time", "Service name", "CO2 footprint", "Vessel name", "Voyage no.", "Vessel build year", "Vessel flag", "Vessel imo code"]
+columns = ["Origin", "Departure port", "Departure terminal", "Destination", "Arrival port", "Arrival terminal", "Departure time", "Arrival time", "Transit time", "Service name", "CO2 footprint", "Vessel name", "Voyage no.", "Vessel build year", "Vessel flag", "Vessel imo code"]
 
 # Scrape the webpage
 soups_ods = get_soups(od_ports, headless=True)
