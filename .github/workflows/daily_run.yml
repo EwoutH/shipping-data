@@ -6,7 +6,7 @@ on:
     - cron: '0 5 * * *'
   push:
     paths:
-     - ".github/workflows/routescanner_daily.yml"
+     - ".github/workflows/daily_run.yml"
      - "webscrapers/routescanner_automated.py"
      - "webscrapers/msc_automated.py"
   workflow_dispatch:
