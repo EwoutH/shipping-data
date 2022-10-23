@@ -37,6 +37,8 @@ An initial version of the MSC webscraper is available at [`webscrapers/msc_autom
 
 Initial data is available in CSV and Pickle form at [`data/msc_daily`](data/msc_daily) and [`pickles/msc_daily`](pickles/msc_daily). An experimental notebook can be found at [`notebooks/scraping_msc.ipynb`](notebooks/scraping_msc.ipynb).
 
+A script to combine the data from multiple days is availabe at [`scripts/combine_msc.py`](scripts/combine_msc.py). The combined data itself is availble as CSV and Pickle at [`data/msc_connections_combined.csv`](data/msc_connections_combined.csv) and [`pickles/msc_connections_combined.pickle`](pickles/msc_connections_combined.pickle).
+
 It's in prototype state, with a lot of open bugs and unwanted behaviour. Data collected will be incomplete.
 
 ## License
