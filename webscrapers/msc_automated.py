@@ -36,8 +36,8 @@ def get_soups(od_ports=od_ports, headless=True):
 
     # Instantiate options
     opts = Options()
-    #opts.binary_location = "/usr/bin/google-chrome"
-    opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+    opts.binary_location = "/usr/bin/google-chrome"
+    #opts.binary_location = "C:\Program Files\Google\Chrome\Application\chrome.exe"
     if headless:
         opts.headless = headless
     opts.add_argument('--remote-debugging-port=9222')
