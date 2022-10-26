@@ -12,7 +12,7 @@ import time
 #The browser version is stored. This will be used for the user agent in the actual driver
 opts = Options()
 opts.headless = True
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome(options=opts,service=Service(ChromeDriverManager().install()))
 version = driver.capabilities['browserVersion']
 driver.quit()
 
@@ -21,7 +21,7 @@ opts = Options()
 opts.add_argument("window-size=1280,720") #locks the window size
 version = driver.capabilities['browserVersion']
 opts.add_argument("user-agent=Chrome/version {}") #Prevents sites from blocking traffic
-headless = True
+headless = False
 if headless: #if True, open chrome on the background without window
     opts.headless = True
 
