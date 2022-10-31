@@ -8,6 +8,7 @@ on:
   push:
     paths:
      - ".github/workflows/daily_run_v2.yml"
+     - "webscrapers/routescanner_automated_v2.py"
      - "webscrapers/msc_automated_v2.py"
   workflow_dispatch:
 
