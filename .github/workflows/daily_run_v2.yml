@@ -1,0 +1,29 @@
+# This workflows starts scraping Routescanner and MSC each day at 05:00 UTC,
+# using the v2 scrapers, and opens a PR to merge the gathered data.
+
+name: Scrape Routescanner and MSC daily (v2)
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  push:
+    paths:
+     - ".github/workflows/daily_run_v2.yml"
+     - "webscrapers/msc_automated_v2.py"
+  workflow_dispatch:
+
+jobs:
+  msc-v2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - run: pip install -U pandas requests
+    - run: python msc_automated_v2.py
+      working-directory: ./webscrapers
+    - uses: peter-evans/create-pull-request@v4
+      with:
+        branch: "msc-data-v2"
+        branch-suffix: "timestamp"
+        title: "Add MSC v2 data"
