@@ -12,6 +12,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  routescanner-v2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - run: pip install -U pandas requests
+    - run: python routescanner_automated_v2.py
+      working-directory: ./webscrapers
+    - uses: peter-evans/create-pull-request@v4
+      with:
+        branch: "routescanner-data-v2"
+        branch-suffix: "timestamp"
+        title: "Add Routescanner v2 data"
+
   msc-v2:
     runs-on: ubuntu-latest
     steps:
