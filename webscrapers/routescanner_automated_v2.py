@@ -115,3 +115,4 @@ for d in data:
 # Save DataFrame
 df = pd.DataFrame(route_data)
 print(f"Done. DataFrame has {df.index.size} entries")
+df.to_csv(f"../data/routescanner_daily_v2/connections_{today}.csv")
