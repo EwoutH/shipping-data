@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Define date range to merge (currently only works for October)
-dates = [f"2022-10-{day}" for day in range(22,24)]
+dates = [f"2022-10-{day}" for day in range(22,32)]
 
 # Read first DataFrame from Pickle
 comb_df = pd.read_pickle(f"../pickles/msc_daily/connections_{dates[0]}.pickle")
