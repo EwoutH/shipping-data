@@ -51,7 +51,7 @@ def request_machine_token():
         "Connection": "keep-alive",
         "Content-Type": "application/json",
     }
-    response = requests.request("GET", token_url, headers=headers)
+    response = requests.request("GET", token_url, headers=token_headers)
 
     r = response.json()
     machine_token = r['machineToken']
@@ -72,32 +72,32 @@ headers = {
     "machine_token": machine_token,
 }
 
+sort_by = "transfers"  # transfers, emission_co2, arrival or duration
+modalities = "sea"     # rail, barge, and truck can be added
+
 data = []
-for n, (o, d) in enumerate(od_ids[:20]):
-        o_code = port_codes[int(o)]
-        d_code = port_codes[int(d)]
+for n, (o, d) in enumerate(od_ids):
+    o_code = port_codes[int(o)]
+    d_code = port_codes[int(d)]
 
-        sort_by = "transfers"  # transfers, emission_co2, arrival or duration
-        modalities = "sea"     # rail, barge, and truck can be added
+    querystring = {"offset":"0","limit":"100","origin":o_code,"originType":"locode","destination":d_code,
+                   "destinationType":"locode","destinationsNearby":"true","originsNearby":"true",
+                   "minDeparture":today,"sort":sort_by,"modalities":modalities}
 
-        querystring = {"offset":"0","limit":"100","origin":o_code,"originType":"locode","destination":d_code,
-                       "destinationType":"locode","destinationsNearby":"true","originsNearby":"true",
-                       "minDeparture":today,"sort":sort_by,"modalities":modalities}
+    response = requests.request("GET", url, headers=headers, params=querystring)
 
-        response = requests.request("GET", url, headers=headers, params=querystring)
+    # Check if request was successful
+    if response.status_code != 200:
+        print(f"Warning: Status code != 200 (on {o_code} to {d_code}, #{n}).")
+        continue
 
-        # Check if request was succesfull
-        if response.status_code != 200:
-            print(f"Warning: Status code != 200 (on {o_code} to {d_code}, #{n}).")
-            continue
+    # Save data
+    rdict = response.json()
+    new_data = rdict
+    data.append(new_data)
 
-        # Save data
-        rdict = response.json()
-        new_data = rdict
-        data.append(new_data)
-
-        if n % 5 == 0:
-            print(f"Scraped {n}/{n_combs}")
+    if n % 5 == 0:
+        print(f"Scraped {n}/{n_combs}")
 
 
 # Save list with dicts as Pickle
