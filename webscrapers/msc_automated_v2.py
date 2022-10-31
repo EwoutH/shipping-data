@@ -4,7 +4,7 @@ import requests
 import pickle
 
 # Define origin and destination countries
-origin = ["BR", "CO", "VE", "SR", "CW", "GY", "GF", "UY", "AR", "CL", "PE", "EC", "VN"]
+origin = ["BR", "CO", "VE", "SR", "CW", "GY", "GF", "UY", "AR", "CL", "PE", "EC", "VN", "PY", "GY", "KH"]
 destination = ["NL", "BE"]
 
 # Create DataFrames from UN-LOCODE CSVs
