@@ -21,7 +21,7 @@ In this section the current webscrapers are globally explained.
 
 ### Routescanner
 
-The Routescanner webscraper scans planned container connections from https://www.routescanner.com/voyages. The webscraper is availble at [`webscrapers/routescanner_automated.py`](webscrapers/routescanner_automated.py) and runs each morning thanks to the [`routescanner_daily.yml`](.github/workflows/routescanner_daily.yml) GitHub Actions workflow. It's currently configured to scrape all connections between 26 departure ports in South America and Vietnam, and 5 arrival ports in The Netherlands and Belgium. For these 130 port-combinations around 1400 connections are found each run, while not all unique.
+The Routescanner webscraper scans planned container connections from https://www.routescanner.com/voyages. The webscraper is available at [`webscrapers/routescanner_automated.py`](webscrapers/routescanner_automated.py) and runs each morning thanks to the [`routescanner_daily.yml`](.github/workflows/routescanner_daily.yml) GitHub Actions workflow. It's currently configured to scrape all connections between 26 departure ports in South America and Vietnam, and 5 arrival ports in The Netherlands and Belgium. For these 130 port-combinations around 1400 connections are found each run, while not all unique.
 
 Daily run data is saved in [`data/routescanner_daily`](data/routescanner_daily) in CSV form and in [`pickles/routescanner_daily`](pickles/routescanner_daily) using [pickles](https://docs.python.org/3/library/pickle.html), which each contain a Pandas DataFrame. The [`scripts/combine_routescanner.py`](scripts/combine_routescanner.py) can be used to merge all the DataFrames, of which the resulting combined data can be found in [`pickles/routescanner_connections_combined.pickle`](pickles/routescanner_connections_combined.pickle) and [`data/routescanner_connections_combined.csv`](data/routescanner_connections_combined.csv).
 
@@ -37,7 +37,7 @@ An initial version of the MSC webscraper is available at [`webscrapers/msc_autom
 
 Initial data is available in CSV and Pickle form at [`data/msc_daily`](data/msc_daily) and [`pickles/msc_daily`](pickles/msc_daily). An experimental notebook can be found at [`notebooks/scraping_msc.ipynb`](notebooks/scraping_msc.ipynb).
 
-A script to combine the data from multiple days is availabe at [`scripts/combine_msc.py`](scripts/combine_msc.py). The combined data itself is availble as CSV and Pickle at [`data/msc_connections_combined.csv`](data/msc_connections_combined.csv) and [`pickles/msc_connections_combined.pickle`](pickles/msc_connections_combined.pickle).
+A script to combine the data from multiple days is available at [`scripts/combine_msc.py`](scripts/combine_msc.py). The combined data itself is available as CSV and Pickle at [`data/msc_connections_combined.csv`](data/msc_connections_combined.csv) and [`pickles/msc_connections_combined.pickle`](pickles/msc_connections_combined.pickle).
 
 It's in prototype state, with a lot of open bugs and unwanted behaviour. Data collected will be incomplete.
 
