@@ -79,6 +79,9 @@ modalities = "sea"     # rail, barge, and truck can be added
 
 data = []
 for n, (o, d) in enumerate(od_ids):
+    # Sleep a bit to reduce chance of getting the machine token blocked
+    sleep(random.uniform(12,15))
+
     o_code = port_codes[int(o)]
     d_code = port_codes[int(d)]
 
@@ -100,9 +103,6 @@ for n, (o, d) in enumerate(od_ids):
 
     if n % 5 == 0:
         print(f"Scraped {n}/{n_combs}")
-
-    # Sleep a bit to reduce chance of getting the machine token blocked
-    sleep(random.uniform(5,7))
 
 # Save list with dicts as Pickle
 with open(f'../pickles/routescanner_daily_v2/connections_{today}.pickle', 'wb') as handle:
