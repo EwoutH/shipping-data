@@ -2,6 +2,8 @@ import itertools
 import pandas as pd
 import requests
 import pickle
+from time import sleep
+import random
 
 # Define origin and destination countries
 origin = ["BR", "CO", "VE", "SR", "CW", "GY", "GF", "UY", "AR", "CL", "PE", "EC", "VN", "PY", "GY", "KH"]
@@ -99,6 +101,8 @@ for n, (o, d) in enumerate(od_ids):
     if n % 5 == 0:
         print(f"Scraped {n}/{n_combs}")
 
+    # Sleep a bit to reduce chance of getting the machine token blocked
+    sleep(random.uniform(5,7))
 
 # Save list with dicts as Pickle
 with open(f'../pickles/routescanner_daily_v2/connections_{today}.pickle', 'wb') as handle:
