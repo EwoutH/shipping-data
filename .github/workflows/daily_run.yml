@@ -3,8 +3,9 @@
 
 name: Scrape Routescanner and MSC daily
 on:
-  schedule:
-    - cron: '0 6 * * *'
+  # Disabled because Routescanner v1 is broken, and MSC v1 is redundant (replaced by v2)
+  #schedule:
+  #  - cron: '0 6 * * *'
   push:
     paths:
      - ".github/workflows/daily_run.yml"
