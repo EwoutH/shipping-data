@@ -1,0 +1,39 @@
+# This workflows starts scraping Routescanner and MSC each day at 06:00 UTC,
+# using the v1 scrapers, and opens a PR to merge the gathered data.
+
+name: Get n Routescanner machine tokens
+on:
+  push:
+    paths:
+     - ".github/workflows/n_tokens.yml"
+  workflow_dispatch:
+
+jobs:
+  n_tokens:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        n: [0 1 2]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - run: pip install -U requests
+    - run: python get_machine_token.py
+    - uses: actions/upload-artifact@v3
+      with:
+        name: tokens
+        path: machine_token
+
+  combine:
+    needs: n_tokens
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - uses: actions/download-artifact@v3
+      with:
+        name: tokens
