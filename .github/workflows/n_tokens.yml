@@ -6,6 +6,7 @@ on:
   push:
     paths:
      - ".github/workflows/n_tokens.yml"
+     - "get_machine_token.py"
   workflow_dispatch:
 
 jobs:
@@ -13,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        n: [0 1 2]
+        n: [0, 1, 2]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
         python-version: "3.10"
-    - run: pip install -U requests
+    - run: pip install -U requests fake_useragent
     - run: python get_machine_token.py
     - uses: actions/upload-artifact@v3
       with:
