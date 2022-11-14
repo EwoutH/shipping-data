@@ -57,13 +57,14 @@ def request_machine_token():
         "Connection": "keep-alive",
         "Content-Type": "application/json",
     }
-    response = requests.request("GET", token_url, headers=token_headers)
+    response = requests.get(token_url, headers=token_headers)
 
     r = response.json()
     machine_token = r['machineToken']
     return machine_token
 
 machine_token = request_machine_token()
+print(f"Machine token: {machine_token}")
 
 
 # Scrape RouteScanner
@@ -94,7 +95,7 @@ for n, (o, d) in enumerate(od_ids):
                    "destinationType":"locode","destinationsNearby":"true","originsNearby":"true",
                    "minDeparture":today,"sort":sort_by,"modalities":modalities}
 
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    response = requests.get(url, headers=headers, params=querystring)
 
     # Check if request was successful
     if response.status_code != 200:
