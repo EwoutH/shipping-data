@@ -4,6 +4,7 @@ import requests
 import pickle
 from time import sleep
 import random
+from fake_useragent import UserAgent
 
 # Define origin and destination countries
 origin = ["BR", "CO", "VE", "SR", "CW", "GY", "GF", "UY", "AR", "CL", "PE", "EC", "VN", "PY", "GY", "KH"]
@@ -42,12 +43,15 @@ from datetime import date
 today = date.today()
 print(today)
 
+# Get random user agent
+user_agent = UserAgent().random
 
 # Get machine_token for device
 def request_machine_token():
     token_url = "https://www.routescanner.com/home-vars"
 
     token_headers = {
+        "User-Agent": user_agent,
         "Accept": "*/*",
         "Accept-Language": "en-US,en;q=0.9",
         "Connection": "keep-alive",
@@ -66,6 +70,7 @@ machine_token = request_machine_token()
 url = "https://api.routescanner.com/voyages/v1"
 
 headers = {
+    "User-Agent": user_agent,
     "Accept": "*/*",
     "Accept-Language": "en-US,en;q=0.9,nl-NL;q=0.8,nl;q=0.7",
     "Connection": "keep-alive",

@@ -20,7 +20,7 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: "3.10"
-    - run: pip install -U pandas requests
+    - run: pip install -U pandas requests fake_useragent
     - run: python routescanner_automated_v2.py
       working-directory: ./webscrapers
     - uses: peter-evans/create-pull-request@v4
