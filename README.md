@@ -4,8 +4,8 @@ This repository contains a public collection of shipping data from South America
 ## Repository structure
 The repository is structured as follows:
  - [`webscrapers`](webscrapers) contains the Python file for each webscraper.
- - [`docs`](docs) contains all the specific documentation for each webscraper.
- - [`notebooks`](notebooks) contains (parts of the) webscrapers in Notebook format.
+ - [`docs`](docs) !!!! contains all the specific documentation for each webscraper.
+ - [`notebooks`](notebooks) contains (parts of the) webscrapers in Notebook format. This was mainly used for developing the webscrapers.
  - [`pickles`](pickles) contains Pickle files for all data in Python (mostly Pandas DataFrames).
  - [`data`](data) contains all other data (mostly CSVs).
  - [`scripts`](scripts) contains helper Python scripts to merge data for example.
@@ -40,6 +40,13 @@ Initial data is available in CSV and Pickle form at [`data/msc_daily`](data/msc_
 A script to combine the data from multiple days is available at [`scripts/combine_msc.py`](scripts/combine_msc.py). The combined data itself is available as CSV and Pickle at [`data/msc_connections_combined.csv`](data/msc_connections_combined.csv) and [`pickles/msc_connections_combined.pickle`](pickles/msc_connections_combined.pickle).
 
 It's in prototype state, with a lot of open bugs and unwanted behaviour. Data collected will be incomplete.
+
+### Maersk
+
+The Maersk scraper used the point to point function on the site https://www.maersk.com/schedules/pointToPoint. The webscraper is available at [`webscrapers/maersk.py`]. Similarly to MSC and routescanner, it scrapes 130 port-combinations. Initial data is available in CSV and Pickle form at [`data/maersk_daily`](data/msc_daily) and [`pickles/maersk_daily`](pickles/msc_daily).\
+
+The Maersk scraper sometimes doesn't provide a route between origin and destination, even though the route actually exists. Errors from this issue have been prevented.
+If the daily run doesn't find a route, another daily run will find it. Reason for this is that all routes are not daily routes. Therefore the routes can be found on the site for multiple days and therefore be scraped.
 
 ## License
 As for now, all code in this repository is licensed under the GPL-3.0 license. At a later moment in this project this may change to a more permissive license.
