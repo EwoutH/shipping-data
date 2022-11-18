@@ -19,7 +19,7 @@ from datetime import date
 opts = Options()
 opts.add_argument("window-size=1280,720") #locks the window size
 opts.add_argument("user-agent=Chrome/106.0.5249.119") #Prevents sites from blocking traffic
-headless = False
+headless = True
 
 if headless: #if True, open chrome on the background without window
     opts.headless = True
@@ -42,7 +42,6 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 #!!! Instructions on port selection end
 
 o_names = ["Arica, Chile","Belem (Para), Brazil","Buenaventura (Valle Del Cauca), Colombia","Buenos Aires (Buenos Aires), Argentina","Asuncion, Paraguay","Pilar, Paraguay","Callao, Peru","Campana (Buenos Aires), Argentina","Cartagena (Bolivar), Colombia","Coronel, Chile","Da Nang (Da Nang), Vietnam","Encarnacion, Paraguay","Georgetown, Guyana","Guayaquil, Ecuador","Haiphong (Hai Phong), Vietnam","Ho Chi Minh city - ICD Phuoc Long (Ho Chi Minh), Vietnam","Iquique, Chile","Itajai (Santa Catarina), Brazil","Itapoa (Santa Catarina), Brazil","Sihanoukville, Cambodia","La Guaira, Venezuela","Lirquen, Chile","Manaus (Amazonas), Brazil","Montevideo, Uruguay","Navegantes (Santa Catarina), Brazil","Nueva Palmira, Uruguay","Paita, Peru","Paramaribo, Suriname","Paranagua (Parana), Brazil","Pecem (Ceara), Brazil","Phnom Penh, Cambodia","Porto Velho (Rondonia), Brazil","Posorja - Guayas, Ecuador","Puerto Angamos, Chile","Puerto Bolivar - El Oro, Ecuador","Puerto Cabello, Venezuela","Villeta, Paraguay","Qui Nhon (Binh Dinh), Vietnam","Rio de Janeiro (Rio de Janeiro), Brazil","Rio Grande (Rio Grande do Sul), Brazil","Rosario (Santa Fe), Argentina","Salvador (Bahia), Brazil","San Antonio, Chile","San Vicente, Chile","Santarem (Para), Brazil","Santos (Sao Paulo), Brazil","Suape (Pernambuco), Brazil","Terport, Paraguay","Turbo (Antioquia), Colombia","Ushuaia (Tierra del Fuego), Argentina","Valparaiso, Chile","Vila do Conde (Para), Brazil","Vitoria (Espirito Santo), Brazil","Vung Tau (Ba Ria - Vung Tau), Vietnam","ZARATE (Buenos Aires), Argentina"]
-
 # Puerto seguro flavial has been moved to villeta. This place seemed more logical according to lat and long
 # Terport villeta paraguay had no latitude or longitude to check,
 # But luckily there was only one port called Terport in Maersk
@@ -50,7 +49,6 @@ o_names = ["Arica, Chile","Belem (Para), Brazil","Buenaventura (Valle Del Cauca)
 d_names = ["Amsterdam (Noord-Holland), Netherlands","Antwerp (Antwerp), Belgium","Moerdijk (Noord-Brabant), Netherlands","Rotterdam (Zuid-Holland), Netherlands","Vlissingen (Zeeland), Netherlands","Zeebrugge (West Flanders), Belgium"]
 
 od_names = list(itertools.product(o_names, d_names))
-print(f"{(n_combs := len(od_names))} combinations of ports ({len(o_names)} origins * {len(d_names)} destinations)")
 
 ### This part fills in all the origin destination locations and saves the soup which will be processed later on
 soups = []
@@ -119,9 +117,6 @@ def get_webpages(od_names):
             page_source = driver.page_source
             soup = BeautifulSoup(page_source)
             soups.append(soup)
-
-        else:
-            print("No route found for:",i)
 
     #Closes the webdriver after a few seconds
     driver.stop_client()
@@ -296,7 +291,6 @@ initialize_processing(soups)
 columns = ["Origin","Destination","Departure time", "Arrival time","Ports","Vessels","Dates"]
 
 connection_df = pd.DataFrame(route_data, columns=columns)
-connection_df
 
 # Store as both pickle and CSV
 today = date.today()
