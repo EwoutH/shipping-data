@@ -1,20 +1,21 @@
 # This workflows starts scraping Routescanner and MSC each day at 06:00 UTC,
 # using the v1 scrapers, and opens a PR to merge the gathered data.
 
-name: Scrape Routescanner and MSC daily
+name: Scrape Maersk daily
 on:
   # Disabled because Routescanner v1 is broken, and MSC v1 is redundant (replaced by v2)
-  #schedule:
-  #  - cron: '0 6 * * *'
+  schedule:
+    - cron: '0 6 * * *'
   push:
     paths:
      - ".github/workflows/daily_run.yml"
-     - "webscrapers/routescanner_automated.py"
-     - "webscrapers/msc_automated.py"
+     #- "webscrapers/routescanner_automated.py"
+     #- "webscrapers/msc_automated.py"
+     - "webscrapers/maersk.py"
   workflow_dispatch:
 
 jobs:
-  routescanner:
+  maersk:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -24,28 +25,10 @@ jobs:
     - run: pip install -U pip wheel setuptools
     - run: pip install -U selenium beautifulsoup4 pandas numpy packaging
     - run: pip install git+https://github.com/SergeyPirogov/webdriver_manager@master
-    - run: python routescanner_automated.py
+    - run: python maersk.py
       working-directory: ./webscrapers
     - uses: peter-evans/create-pull-request@v4
       with:
-        branch: "routescanner-data"
+        branch: "maersk-data"
         branch-suffix: "timestamp"
-        title: "Add Routescanner data"
-
-  msc:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-    - run: pip install -U pip wheel setuptools
-    - run: pip install -U selenium beautifulsoup4 pandas numpy packaging
-    - run: pip install git+https://github.com/SergeyPirogov/webdriver_manager@master
-    - run: python msc_automated.py
-      working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v4
-      with:
-        branch: "msc-data"
-        branch-suffix: "timestamp"
-        title: "Add MSC data"
+        title: "Add Maersk data"
