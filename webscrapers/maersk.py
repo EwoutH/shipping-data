@@ -19,7 +19,7 @@ from datetime import date
 opts = Options()
 opts.add_argument("window-size=1280,720") #locks the window size
 opts.add_argument("user-agent=Chrome/106.0.5249.119") #Prevents sites from blocking traffic
-headless = True
+headless = False
 
 if headless: #if True, open chrome on the background without window
     opts.headless = True
@@ -146,12 +146,15 @@ def process_data_route(route,list_ports,route_data):
     # This makes sure that only the Cap San Lorenzo part is stored
     # Furthermore these steps only work for the first vessel that is being used
     vessel_name = info_departure.find(class_="rich-text").text
-    vessel_name = vessel_name.split()
-    vessel_name.remove('Departing')
-    vessel_name.remove('on')
-    vessel_name.remove("/")
-    vessel_name.pop(-1)
-    vessel_name = ' '.join(vessel_name)
+    if vessel_name == "-":
+        vessel_name = "-"
+    else:
+        vessel_name = vessel_name.split()
+        vessel_name.remove('Departing')
+        vessel_name.remove('on')
+        vessel_name.remove("/")
+        vessel_name.pop(-1)
+        vessel_name = ' '.join(vessel_name)
 
     vessel_info = route.find(class_="vessel")
 
@@ -206,12 +209,15 @@ def process_data_transfer(route,list_ports,route_data,vessels):
             transfer_arrival_departure.append(departure_date)
 
             vessel_name = info_departure.find(class_="rich-text").text
-            vessel_name = vessel_name.split()
-            vessel_name.remove('Departing')
-            vessel_name.remove('on')
-            vessel_name.remove("/")
-            vessel_name.pop(-1)
-            vessel_name = ' '.join(vessel_name)
+            if vessel_name == "-":
+                vessel_name = "-"
+            else:
+                vessel_name = vessel_name.split()
+                vessel_name.remove('Departing')
+                vessel_name.remove('on')
+                vessel_name.remove("/")
+                vessel_name.pop(-1)
+                vessel_name = ' '.join(vessel_name)
 
             vessel_info = transfer_ship.find(class_="vessel")
 
