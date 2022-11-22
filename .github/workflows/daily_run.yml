@@ -24,6 +24,7 @@ jobs:
         python-version: "3.10"
     - run: pip install -U pip wheel setuptools
     - run: pip install -U selenium beautifulsoup4 pandas numpy packaging
+    - run: pip install webdriver-manager
     - run: pip install git+https://github.com/SergeyPirogov/webdriver_manager@master
     - run: python maersk.py
       working-directory: ./webscrapers
