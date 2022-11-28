@@ -54,6 +54,7 @@ od_names = list(itertools.product(o_names, d_names))
 soups = []
 
 def get_webpages(od_names):
+    print(f"Starting to scrape {len(od_names)} harbor combinations.")
     #Open Maersk point to point site
     driver.get("https://www.maersk.com/schedules/pointToPoint")
     time.sleep(3)
@@ -123,7 +124,7 @@ def get_webpages(od_names):
     driver.stop_client()
     driver.quit()
 
-get_webpages(od_names)
+get_webpages(od_names[:20])
 
 def process_data_route(route,list_ports,route_data):
     #The origin port is the first port in the list, destination the last
@@ -147,14 +148,14 @@ def process_data_route(route,list_ports,route_data):
     # This makes sure that only the Cap San Lorenzo part is stored
     # Furthermore these steps only work for the first vessel that is being used
     vessel_name = info_departure.find(class_="rich-text").text
+    vessel_name = vessel_name.removeprefix(' Departing on ')
     vessel_name = vessel_name.split()
-    if len(vessel_name) >= 3:
-        vessel_name.remove('Departing')
-        vessel_name.remove('on')
+    if len(vessel_name) >= 2:
         vessel_name.remove("/")
         vessel_name.pop(-1)
         vessel_name = ' '.join(vessel_name)
     else:
+        print(f"WARNING: Could not proces vessel name: {vessel_name}")
         vessel_name[0]
 
     vessel_info = route.find(class_="vessel")
@@ -210,13 +211,15 @@ def process_data_transfer(route,list_ports,route_data,vessels):
             transfer_arrival_departure.append(departure_date)
 
             vessel_name = info_departure.find(class_="rich-text").text
-            print(vessel_name)
+            vessel_name = vessel_name.removeprefix(' Departing on ')
             vessel_name = vessel_name.split()
-            vessel_name.remove('Departing')
-            vessel_name.remove('on')
-            vessel_name.remove("/")
-            vessel_name.pop(-1)
-            vessel_name = ' '.join(vessel_name)
+            if len(vessel_name) >= 2:
+                vessel_name.remove("/")
+                vessel_name.pop(-1)
+                vessel_name = ' '.join(vessel_name)
+            else:
+                print(f"WARNING: Could not proces vessel name: {vessel_name}")
+                vessel_name[0]
 
             vessel_info = transfer_ship.find(class_="vessel")
 
