@@ -156,28 +156,29 @@ def process_data_route(route,list_ports,route_data):
         vessel_name = ' '.join(vessel_name)
     else:
         print(f"WARNING: Could not proces vessel name: {vessel_name}")
-        vessel_name[0]
 
     vessel_info = route.find(class_="vessel")
+    if vessel_info is not None:
+        imo = vessel_info.find(class_="imo").text
+        imo = imo.removeprefix('IMO Number')
 
-    imo = vessel_info.find(class_="imo").text
-    imo = imo.removeprefix('IMO Number')
+        service = vessel_info.find(class_="service").text
+        service = service.removeprefix('Service')
 
-    service = vessel_info.find(class_="service").text
-    service = service.removeprefix('Service')
+        flag = vessel_info.find(class_="flag").text
+        flag = flag.removeprefix('Flag')
 
-    flag = vessel_info.find(class_="flag").text
-    flag = flag.removeprefix('Flag')
+        callsign = vessel_info.find(class_="callsign").text
+        callsign = callsign.removeprefix('Call Sign')
 
-    callsign = vessel_info.find(class_="callsign").text
-    callsign = callsign.removeprefix('Call Sign')
+        built_year_ship = vessel_info.find(class_="built").text
+        built_year_ship = built_year_ship.removeprefix('Built')
 
-    built_year_ship = vessel_info.find(class_="built").text
-    built_year_ship = built_year_ship.removeprefix('Built')
-
-    # Store the information about the first used vessel as a list
-    # If other vessels are also used, these will be also be stored as a list
-    vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
+        # Store the information about the first used vessel as a list
+        # If other vessels are also used, these will be also be stored as a list
+        vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
+    else:
+        print("vessel_info is None")
 
     if len(list_ports)>2: # If there is a transfer, store data and also run process_data_transfer
         route_data.append([origin,destination,departure_date,arrival_date])
@@ -219,26 +220,28 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 vessel_name = ' '.join(vessel_name)
             else:
                 print(f"WARNING: Could not proces vessel name: {vessel_name}")
-                vessel_name[0]
 
             vessel_info = transfer_ship.find(class_="vessel")
 
-            imo = vessel_info.find(class_="imo").text
-            imo = imo.removeprefix('IMO Number')
+            if vessel_info is not None:
+                imo = vessel_info.find(class_="imo").text
+                imo = imo.removeprefix('IMO Number')
 
-            service = vessel_info.find(class_="service").text
-            service = service.removeprefix('Service')
+                service = vessel_info.find(class_="service").text
+                service = service.removeprefix('Service')
 
-            flag = vessel_info.find(class_="flag").text
-            flag = flag.removeprefix('Flag')
+                flag = vessel_info.find(class_="flag").text
+                flag = flag.removeprefix('Flag')
 
-            callsign = vessel_info.find(class_="callsign").text
-            callsign = callsign.removeprefix('Call Sign')
+                callsign = vessel_info.find(class_="callsign").text
+                callsign = callsign.removeprefix('Call Sign')
 
-            built_year_ship = vessel_info.find(class_="built").text
-            built_year_ship = built_year_ship.removeprefix('Built')
+                built_year_ship = vessel_info.find(class_="built").text
+                built_year_ship = built_year_ship.removeprefix('Built')
 
-            vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
+                vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
+            else:
+                print("vessel_info is None")
 
     # This part is quite complicated
     # The data on the origin, destination and first vessel were already stored in route_data in process_data_route
