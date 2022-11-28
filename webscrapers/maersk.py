@@ -124,7 +124,7 @@ def get_webpages(od_names):
     driver.stop_client()
     driver.quit()
 
-get_webpages(od_names[:20])
+get_webpages(od_names)
 
 def process_data_route(route,list_ports,route_data):
     #The origin port is the first port in the list, destination the last
