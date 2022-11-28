@@ -17,7 +17,7 @@ from datetime import date
 
 #sets up the options of the chromedriver
 opts = Options()
-opts.add_argument("window-size=1280,720") #locks the window size
+opts.add_argument("window-size=2160,2160") #locks the window size
 opts.add_argument("user-agent=Chrome/106.0.5249.119") #Prevents sites from blocking traffic
 headless = True
 
@@ -70,7 +70,7 @@ def get_webpages(od_names):
         originloc.send_keys(i[0])
 
         #a dropdown menu has to be clicked in order to confirm the origin location. This clicks the correct port
-        time.sleep(4) #Makes sure that the element is actually clickable
+        time.sleep(3) #Makes sure that the element is actually clickable
         action = ActionChains(driver)
         action.move_to_element_with_offset(originloc, 0, 50)
         action.click()
@@ -115,8 +115,9 @@ def get_webpages(od_names):
 
             #Copy's the page to use in Beautifulsoup
             page_source = driver.page_source
-            soup = BeautifulSoup(page_source)
+            soup = BeautifulSoup(page_source, features="html.parser")
             soups.append(soup)
+        print(f"Done with {i}")
 
     #Closes the webdriver after a few seconds
     driver.stop_client()
@@ -147,11 +148,14 @@ def process_data_route(route,list_ports,route_data):
     # Furthermore these steps only work for the first vessel that is being used
     vessel_name = info_departure.find(class_="rich-text").text
     vessel_name = vessel_name.split()
-    vessel_name.remove('Departing')
-    vessel_name.remove('on')
-    vessel_name.remove("/")
-    vessel_name.pop(-1)
-    vessel_name = ' '.join(vessel_name)
+    if len(vessel_name) >= 3:
+        vessel_name.remove('Departing')
+        vessel_name.remove('on')
+        vessel_name.remove("/")
+        vessel_name.pop(-1)
+        vessel_name = ' '.join(vessel_name)
+    else:
+        vessel_name[0]
 
     vessel_info = route.find(class_="vessel")
 
@@ -206,6 +210,7 @@ def process_data_transfer(route,list_ports,route_data,vessels):
             transfer_arrival_departure.append(departure_date)
 
             vessel_name = info_departure.find(class_="rich-text").text
+            print(vessel_name)
             vessel_name = vessel_name.split()
             vessel_name.remove('Departing')
             vessel_name.remove('on')
