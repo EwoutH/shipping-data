@@ -150,7 +150,7 @@ def process_data_route(route,list_ports,route_data):
     vessel_name = info_departure.find(class_="rich-text").text
     vessel_name = vessel_name.removeprefix(' Departing on ')
     vessel_name = vessel_name.split()
-    if len(vessel_name) >= 2:
+    if len(vessel_name) >= 2 and "/" in vessel_name:
         vessel_name.remove("/")
         vessel_name.pop(-1)
         vessel_name = ' '.join(vessel_name)
@@ -213,7 +213,7 @@ def process_data_transfer(route,list_ports,route_data,vessels):
             vessel_name = info_departure.find(class_="rich-text").text
             vessel_name = vessel_name.removeprefix(' Departing on ')
             vessel_name = vessel_name.split()
-            if len(vessel_name) >= 2:
+            if len(vessel_name) >= 2 and "/" in vessel_name:
                 vessel_name.remove("/")
                 vessel_name.pop(-1)
                 vessel_name = ' '.join(vessel_name)
