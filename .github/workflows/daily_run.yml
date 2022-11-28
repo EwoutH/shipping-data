@@ -23,8 +23,7 @@ jobs:
       with:
         python-version: "3.10"
     - run: pip install -U pip wheel setuptools
-    - run: pip install -U selenium beautifulsoup4 pandas numpy packaging
-    - run: pip install git+https://github.com/SergeyPirogov/webdriver_manager@master
+    - run: pip install -U selenium beautifulsoup4 pandas numpy packaging webdriver-manager
     - run: python maersk.py
       working-directory: ./webscrapers
     - uses: peter-evans/create-pull-request@v4
