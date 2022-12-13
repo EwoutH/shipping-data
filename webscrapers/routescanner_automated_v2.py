@@ -84,9 +84,9 @@ sort_by = "transfers"  # transfers, emission_co2, arrival or duration
 modalities = "sea"     # rail, barge, and truck can be added
 
 data = []
-sleeptime = 3
 for n, (o, d) in enumerate(od_ids):
-    i = 1
+    # Sleep a bit to reduce chance of getting the machine token blocked
+    sleep(random.uniform(12,15))
 
     o_code = port_codes[int(o)]
     d_code = port_codes[int(d)]
@@ -95,29 +95,20 @@ for n, (o, d) in enumerate(od_ids):
                    "destinationType":"locode","destinationsNearby":"true","originsNearby":"true",
                    "minDeparture":today,"sort":sort_by,"modalities":modalities}
 
-    while True:  # Keep trying until successfully scraped
-        response = requests.get(url, headers=headers, params=querystring)
+    response = requests.get(url, headers=headers, params=querystring)
 
-        # Check if request was successful
-        if response.status_code != 200:
-            print(f"Warning: Status code != 200 (on attempt {i} for {o_code} to {d_code}, #{n}). Sleeping {sleeptime+10} s.")
-            i += 1
-            sleeptime += 10
-            sleep(random.uniform(sleeptime, sleeptime + 2))
-            continue
+    # Check if request was successful
+    if response.status_code != 200:
+        print(f"Warning: Status code != 200 (on {o_code} to {d_code}, #{n}).")
+        continue
 
-        # If successful, save data
-        rdict = response.json()
-        new_data = rdict
-        data.append(new_data)
-
-        # Reduce sleeptime and sleep
-        sleeptime = max(3, sleeptime - 3)
-        sleep(random.uniform(sleeptime, sleeptime + 2))
-        break  # break from the while True loop, and thus continue with the main for loop
+    # Save data
+    rdict = response.json()
+    new_data = rdict
+    data.append(new_data)
 
     if n % 5 == 0:
-        print(f"Scraped {n}/{n_combs}. Sleeptime {sleeptime} s.")
+        print(f"Scraped {n}/{n_combs}")
 
 # Save list with dicts as Pickle
 with open(f'../pickles/routescanner_daily_v2/connections_{today}.pickle', 'wb') as handle:
