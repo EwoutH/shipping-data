@@ -50,10 +50,32 @@ d_names = ["Amsterdam (Noord-Holland), Netherlands","Antwerp (Antwerp), Belgium"
 
 od_names = list(itertools.product(o_names, d_names))
 
+def open_routes():
+    # All if statements check if a route has been found
+    # First button can already be clicked because that was already checked before opening this process
+    driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span").click()
+    if len(driver.find_elements(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[4]/div/div[4]/button/span")) > 0:
+        driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[4]/div/div[4]/button/span").click()
+        if len(driver.find_elements(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[5]/div/div[4]/button/span")) > 0:
+            driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[5]/div/div[4]/button/span").click()
+
+            if len(driver.find_elements(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[6]/div/div[4]/button/span")) > 0:
+                driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[6]/div/div[4]/button/span").click()
+
+                if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[7]/div/div[4]/button/span")) > 0:
+                    driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[7]/div/div[4]/button/span").click()
+    soup_page() # Soup the page
+
+def soup_page():
+    #Soup the page
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source)
+    soups.append(soup)
+
 ### This part fills in all the origin destination locations and saves the soup which will be processed later on
 soups = []
 
-def get_webpages(od_names):
+def open_webpages(od_names):
     print(f"Starting to scrape {len(od_names)} harbor combinations.")
     #Open Maersk point to point site
     driver.get("https://www.maersk.com/schedules/pointToPoint")
@@ -71,7 +93,7 @@ def get_webpages(od_names):
         originloc.send_keys(i[0])
 
         #a dropdown menu has to be clicked in order to confirm the origin location. This clicks the correct port
-        time.sleep(3) #Makes sure that the element is actually clickable
+        time.sleep(4) #Makes sure that the element is actually clickable
         action = ActionChains(driver)
         action.move_to_element_with_offset(originloc, 0, 50)
         action.click()
@@ -97,34 +119,25 @@ def get_webpages(od_names):
         # 2: Sometimes Maersk site gives an error for either origin or destination
         #    even when the names are correctly filled in. Error seems to appear randomly
         # Try makes sure the code doesn't fail even if a route is not found
-        # It works by checking if the button for 'show route details' can be clicked
+        # It works by checking if the first button for 'show route details' can be clicked. If not, no route has been found
         time.sleep(5)
         if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span")) > 0:
-            driver.find_element(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span").click()
-
-            if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[4]/div/div[4]/button/span")) > 0:
-                driver.find_element(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[4]/div/div[4]/button/span").click()
-
-                if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[5]/div/div[4]/button/span")) > 0:
-                    driver.find_element(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[5]/div/div[4]/button/span").click()
-
-                    if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[6]/div/div[4]/button/span")) > 0:
-                        driver.find_element(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[6]/div/div[4]/button/span").click()
-
-                        if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[7]/div/div[4]/button/span")) > 0:
-                            driver.find_element(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[7]/div/div[4]/button/span").click()
-
-            #Copy's the page to use in Beautifulsoup
-            page_source = driver.page_source
-            soup = BeautifulSoup(page_source, features="html.parser")
-            soups.append(soup)
-        print(f"Done with {i}")
+            open_routes() #Expand all the show route details buttons
+            time.sleep(5)
+            if len(driver.find_elements(By.CLASS_NAME,"load-more__text")) > 0: #Check if even more routes have been found than just appearing on the first page
+                driver.find_elements(By.CLASS_NAME,"load-more__text")[1].click() #Click to open second page with routes
+                                                                                 # 'Earlier sailings' and 'Later sailings' have same class. We want to click 'Later sailings'
+                time.sleep(5) #Make sure that all buttons can open
+                if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span")) > 0:
+                    open_routes() #if statement above is not necessarily needed. It checks again if at least 1 route can be found.
+                                  # That should be the case because we are on the second page of routes. More of a failsafe.
+        else: #In the notebook something will be printed here
 
     #Closes the webdriver after a few seconds
     driver.stop_client()
     driver.quit()
 
-get_webpages(od_names)
+open_webpages(od_names)
 
 def process_data_route(route,list_ports,route_data):
     #The origin port is the first port in the list, destination the last
@@ -154,8 +167,7 @@ def process_data_route(route,list_ports,route_data):
         vessel_name.remove("/")
         vessel_name.pop(-1)
         vessel_name = ' '.join(vessel_name)
-    else:
-        print(f"WARNING: Could not proces vessel name: {vessel_name}")
+    else: #In the notebook something will be printed here
 
     vessel_info = route.find(class_="vessel")
     if vessel_info is not None:
@@ -177,8 +189,7 @@ def process_data_route(route,list_ports,route_data):
         # Store the information about the first used vessel as a list
         # If other vessels are also used, these will be also be stored as a list
         vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
-    else:
-        print("vessel_info is None")
+    else: #In the notebook something will be printed here
 
     if len(list_ports)>2: # If there is a transfer, store data and also run process_data_transfer
         route_data.append([origin,destination,departure_date,arrival_date])
@@ -218,8 +229,8 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 vessel_name.remove("/")
                 vessel_name.pop(-1)
                 vessel_name = ' '.join(vessel_name)
-            else:
                 print(f"WARNING: Could not proces vessel name: {vessel_name}")
+            else: #In the notebook something will be printed here
 
             vessel_info = transfer_ship.find(class_="vessel")
 
@@ -240,8 +251,7 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 built_year_ship = built_year_ship.removeprefix('Built')
 
                 vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
-            else:
-                print("vessel_info is None")
+            else: #In the notebook something will be printed here
 
     # This part is quite complicated
     # The data on the origin, destination and first vessel were already stored in route_data in process_data_route
