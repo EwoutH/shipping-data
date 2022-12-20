@@ -229,7 +229,6 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 vessel_name.remove("/")
                 vessel_name.pop(-1)
                 vessel_name = ' '.join(vessel_name)
-                print(f"WARNING: Could not proces vessel name: {vessel_name}")
             else: #In the notebook something will be printed here
 
             vessel_info = transfer_ship.find(class_="vessel")
