@@ -17,7 +17,7 @@ from datetime import date
 
 #sets up the options of the chromedriver
 opts = Options()
-opts.add_argument("window-size=2160,2160") #locks the window size
+opts.add_argument("window-size=1280,720") #locks the window size
 opts.add_argument("user-agent=Chrome/106.0.5249.119") #Prevents sites from blocking traffic
 headless = True
 
@@ -131,7 +131,7 @@ def open_webpages(od_names):
                 if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span")) > 0:
                     open_routes() #if statement above is not necessarily needed. It checks again if at least 1 route can be found.
                                   # That should be the case because we are on the second page of routes. More of a failsafe.
-        else: #In the notebook something will be printed here
+        #In the notebook something will be printed here in an else:
 
     #Closes the webdriver after a few seconds
     driver.stop_client()
@@ -167,7 +167,7 @@ def process_data_route(route,list_ports,route_data):
         vessel_name.remove("/")
         vessel_name.pop(-1)
         vessel_name = ' '.join(vessel_name)
-    else: #In the notebook something will be printed here
+    # In the notebook something will be printed here in an else:
 
     vessel_info = route.find(class_="vessel")
     if vessel_info is not None:
@@ -189,12 +189,12 @@ def process_data_route(route,list_ports,route_data):
         # Store the information about the first used vessel as a list
         # If other vessels are also used, these will be also be stored as a list
         vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
-    else: #In the notebook something will be printed here
+    # In the notebook something will be printed here in an else:
 
     if len(list_ports)>2: # If there is a transfer, store data and also run process_data_transfer
         route_data.append([origin,destination,departure_date,arrival_date])
         process_data_transfer(route,list_ports,route_data,vessels)
-    else:
+    # In the notebook something will be printed here in an else:
         # Just store the route_data
         route_data.append([origin,destination,departure_date,arrival_date,[origin,destination],vessels,[departure_date,arrival_date,]])
         return route_data
@@ -229,7 +229,7 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 vessel_name.remove("/")
                 vessel_name.pop(-1)
                 vessel_name = ' '.join(vessel_name)
-            else: #In the notebook something will be printed here
+            # In the notebook something will be printed here in an else:
 
             vessel_info = transfer_ship.find(class_="vessel")
 
@@ -250,7 +250,7 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 built_year_ship = built_year_ship.removeprefix('Built')
 
                 vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
-            else: #In the notebook something will be printed here
+            # In the notebook something will be printed here in an else:
 
     # This part is quite complicated
     # The data on the origin, destination and first vessel were already stored in route_data in process_data_route
