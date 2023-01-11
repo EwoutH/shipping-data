@@ -28,5 +28,5 @@ if len(files)>1:
     comb_df.head()
 
 # Save as Pickle and CSV
-comb_df.to_pickle(f"../pickles/maersk_daily/combined.pickle")
-comb_df.to_csv(f"../data/maersk_daily/combined.csv")
+comb_df.to_pickle('../pickles/maersk_daily/combined/combined.pickle')
+comb_df.to_csv('../data/maersk_daily/combined/combined.csv')

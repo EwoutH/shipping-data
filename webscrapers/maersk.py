@@ -228,7 +228,7 @@ def process_data_transfer(route,list_ports,route_data,vessels):
 
             transfer_arrival_departure.append(departure_date)
 
-            # Similar as for 1 ship, read description in process_data_route if unclear  
+            # Similar as for 1 ship, read description in process_data_route if unclear
             vessel_name = info_departure.find(class_="rich-text").text
             if vessel_name[:13] != ' Departing on':
                 vessel_name = vessel_name.removeprefix(' Transport via ')
@@ -324,5 +324,5 @@ connection_df = pd.DataFrame(route_data, columns=columns)
 
 # Store as both pickle and CSV
 today = date.today()
-connection_df.to_pickle(f"../pickles/maersk_daily/connections_{today}.pickle")
-connection_df.to_csv(f"../data/maersk_daily/connections_{today}.csv")
+connection_df.to_pickle(f"../pickles/maersk_daily/pickles_before_merge/connections_{today}.pickle")
+connection_df.to_csv(f"../data/maersk_daily/csv_runs/connections_{today}.csv")
