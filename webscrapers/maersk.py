@@ -157,17 +157,23 @@ def process_data_route(route,list_ports,route_data):
     # Make an empty list for all used vessels. If only 1 vessel is used only 1 item will be in this list
     vessels = []
 
-    # The vessel name is intially given as ie. "Departing on CAP SAN LORENZO / 249S"
-    # This makes sure that only the Cap San Lorenzo part is stored
-    # Furthermore these steps only work for the first vessel that is being used
+    # The following code only works for the first vessel that is being stored
+    # Either 2 things can occur: ' Departing on [shipname]' or ' Transport via barge '
+    # If a ship is used, the shipname will be stored
+    # If barge is used, 'barge' will be stored (literally)
     vessel_name = info_departure.find(class_="rich-text").text
-    vessel_name = vessel_name.removeprefix(' Departing on ')
-    vessel_name = vessel_name.split()
-    if len(vessel_name) >= 2 and "/" in vessel_name:
-        vessel_name.remove("/")
-        vessel_name.pop(-1)
-        vessel_name = ' '.join(vessel_name)
-    # In the notebook something will be printed here in an else:
+    if vessel_name[:13] != ' Departing on': #If false: ' Transport via barge'
+        vessel_name = vessel_name.removeprefix(' Transport via ')
+        vessel_name = vessel_name.removesuffix(' ')
+    else: # If a ship is used
+        # The vessel name is intially given as ie. "Departing on CAP SAN LORENZO / 249S"
+        # This makes sure that only the Cap San Lorenzo part is stored
+        vessel_name = vessel_name.removeprefix(' Departing on ')
+        vessel_name = vessel_name.split()
+        if len(vessel_name) >= 2 and "/" in vessel_name:
+            vessel_name.remove("/")
+            vessel_name.pop(-1)
+            vessel_name = ' '.join(vessel_name)
 
     vessel_info = route.find(class_="vessel")
     if vessel_info is not None:
@@ -222,14 +228,18 @@ def process_data_transfer(route,list_ports,route_data,vessels):
 
             transfer_arrival_departure.append(departure_date)
 
+            # Similar as for 1 ship, read description in process_data_route if unclear  
             vessel_name = info_departure.find(class_="rich-text").text
-            vessel_name = vessel_name.removeprefix(' Departing on ')
-            vessel_name = vessel_name.split()
-            if len(vessel_name) >= 2 and "/" in vessel_name:
-                vessel_name.remove("/")
-                vessel_name.pop(-1)
-                vessel_name = ' '.join(vessel_name)
-            # In the notebook something will be printed here in an else:
+            if vessel_name[:13] != ' Departing on':
+                vessel_name = vessel_name.removeprefix(' Transport via ')
+                vessel_name = vessel_name.removesuffix(' ')
+            else:
+                vessel_name = vessel_name.removeprefix(' Departing on ')
+                vessel_name = vessel_name.split()
+                if len(vessel_name) >= 2 and "/" in vessel_name:
+                    vessel_name.remove("/")
+                    vessel_name.pop(-1)
+                    vessel_name = ' '.join(vessel_name)
 
             vessel_info = transfer_ship.find(class_="vessel")
 
