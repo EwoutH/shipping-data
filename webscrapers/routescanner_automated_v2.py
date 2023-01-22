@@ -5,6 +5,7 @@ import pickle
 from time import sleep
 import random
 from fake_useragent import UserAgent
+import time
 
 # Define origin and destination countries
 origin = ["BR", "CO", "VE", "SR", "CW", "GY", "GF", "UY", "AR", "CL", "PE", "EC", "VN", "PY", "GY", "KH"]
@@ -85,7 +86,19 @@ modalities = "sea"     # rail, barge, and truck can be added
 
 data = []
 sleeptime = 3
-for n, (o, d) in enumerate(od_ids):
+
+# Stop after 5 minutes, due to GitHub Actions limitations
+timeout = time.time() + 60 * 1
+print(f"The current time is {time.time()}. Loop will abort at {timeout}.")
+
+# Since not all harbor combinations will be scraped each day, shuffle them,
+# so that most likely, most will be scraped at least once every period of time
+od_ids_shuffled = random.shuffle(od_ids)
+
+for n, (o, d) in enumerate(od_ids_shuffled):
+    if time.time() > timeout:
+        break
+
     i = 1
 
     o_code = port_codes[int(o)]
