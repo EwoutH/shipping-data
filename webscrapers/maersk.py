@@ -328,12 +328,14 @@ def initialize_processing(soups):
 initialize_processing(soups)
 
 # This turns the processed data into a Pandas dataframe
-columns = ["Origin","Destination","LocalEstimatedDepartureTime","LocalEstimatedArrivalTime","EstimatedTotalTransitTime","Ports","Vessels","Dates"]
+columns = ["Origin","Destination","LocalEstimatedDepartureTime","LocalEstimatedArrivalTime","EstimatedTotalTransitTimeDays","Ports","Vessels","Dates"]
 
 connection_df = pd.DataFrame(route_data, columns=columns)
 connection_df["ScrapingDate"] = date.today()
 connection_df["ScrapingSite"] = "Maersk"
-connection_df["EstimatedTotalTransitTimeDays"] = connection_df.EstimatedTotalTransitTime.round('d')
+connection_df["EstimatedTotalTransitTimeDays"] = connection_df.EstimatedTotalTransitTimeDays.round('d')
+
+connection_df
 
 # Store as both pickle and CSV
 today = date.today()
