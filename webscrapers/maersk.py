@@ -150,9 +150,15 @@ def process_data_route(route,list_ports,route_data):
     arrival_date = arrival_date.find_all(class_="font--small")
     arrival_date = arrival_date[1].text
 
+    arrival_date = datetime.strptime(arrival_date,"%d %b %Y %H:%M")  # converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
+
     info_departure = route.find(class_="transport-label font--small")
 
     departure_date = info_departure.find(class_="font--small").text
+
+    departure_date = datetime.strptime(departure_date,"%d %b %Y %H:%M")  # converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
+
+    transittime = arrival_date - departure_date
 
     # Make an empty list for all used vessels. If only 1 vessel is used only 1 item will be in this list
     vessels = []
@@ -198,11 +204,11 @@ def process_data_route(route,list_ports,route_data):
     # In the notebook something will be printed here in an else:
 
     if len(list_ports)>2: # If there is a transfer, store data and also run process_data_transfer
-        route_data.append([origin,destination,departure_date,arrival_date])
+        route_data.append([origin,destination,departure_date,arrival_date,transittime])
         process_data_transfer(route,list_ports,route_data,vessels)
     # In the notebook something will be printed here in an else:
         # Just store the route_data
-        route_data.append([origin,destination,departure_date,arrival_date,[origin,destination],vessels,[departure_date,arrival_date,]])
+        route_data.append([origin,destination,departure_date,arrival_date,transittime,[origin,destination],vessels,[departure_date,arrival_date,]])
         return route_data
 
 def process_data_transfer(route,list_ports,route_data,vessels):
@@ -219,12 +225,16 @@ def process_data_transfer(route,list_ports,route_data,vessels):
 
             arrival_date = info_arrival.find_all(class_="font--small")[1].text
 
+            arrival_date = datetime.strptime(arrival_date,"%d %b %Y %H:%M")  # converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
+
             transfer_arrival_departure.append(arrival_date)
 
             transfer_ship = route.find_all(class_="ptp-results__transport-plan--item")[i+1]
 
             info_departure = transfer_ship.find(class_="transport-label font--small")
             departure_date = info_departure.find(class_="font--small").text
+
+            departure_date = datetime.strptime(departure_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
 
             transfer_arrival_departure.append(departure_date)
 
@@ -318,9 +328,12 @@ def initialize_processing(soups):
 initialize_processing(soups)
 
 # This turns the processed data into a Pandas dataframe
-columns = ["Origin","Destination","Departure time", "Arrival time","Ports","Vessels","Dates"]
+columns = ["Origin","Destination","LocalEstimatedDepartureTime","LocalEstimatedArrivalTime","EstimatedTotalTransitTime","Ports","Vessels","Dates"]
 
 connection_df = pd.DataFrame(route_data, columns=columns)
+connection_df["ScrapingDate"] = date.today()
+connection_df["ScrapingSite"] = "Maersk"
+connection_df["EstimatedTotalTransitTimeDays"] = connection_df.EstimatedTotalTransitTime.round('d')
 
 # Store as both pickle and CSV
 today = date.today()
