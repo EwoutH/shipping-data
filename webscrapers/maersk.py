@@ -9,6 +9,7 @@ import time
 import pandas as pd
 import itertools
 from datetime import date
+from datetime import datetime
 
 # Some definitions in explanation of the code:
 # Connection: ALl possibilities from the origin port to the destination port
