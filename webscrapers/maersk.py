@@ -157,7 +157,8 @@ def process_data_route(route,list_ports,route_data):
     # find only searches for one element. It will stop searching when it finds an element
     # This means that the line below will find only the departure from the origin, not from other transfer departures
     # as it is the first departure that can be found
-    info_departure = route.find(class_="transport-label font--small")
+    info_departure = route.find(class_="ptp-results__transport-plan--item")
+    info_departure = info_departure.find(class_="transport-label font--small")
 
     departure_date = info_departure.find(class_="font--small").text
 
@@ -173,20 +174,23 @@ def process_data_route(route,list_ports,route_data):
     # If a ship is used, the shipname will be stored
     # If barge is used, 'barge' will be stored (literally)
     vessel_name = info_departure.find(class_="rich-text").text
-    if vessel_name[:13] != ' Departing on': #If false: ' Transport via barge'
+    if vessel_name[:13] != ' Departing on': #If false: vessel_name probably starts with: ' Transport via barge'
         vessel_name = vessel_name.removeprefix(' Transport via ')
         vessel_name = vessel_name.removesuffix(' ')
     else: # If a ship is used
-        # The vessel name is intially given as ie. "Departing on CAP SAN LORENZO / 249S"
+        # The vessel name is initially given as ie. "Departing on CAP SAN LORENZO / 249S"
         # This makes sure that only the Cap San Lorenzo part is stored
         vessel_name = vessel_name.removeprefix(' Departing on ')
-        vessel_name = vessel_name.split()
-        if len(vessel_name) >= 2 and "/" in vessel_name:
-            vessel_name.remove("/")
-            vessel_name.pop(-1)
-            vessel_name = ' '.join(vessel_name)
+        if vessel_name == '':
+            vessel_name = 'unknown'
+        if vessel_name != 'unknown':
+            vessel_name = vessel_name.split()
+            if len(vessel_name) >= 2 and "/" in vessel_name:
+                vessel_name.remove("/")
+                vessel_name.pop(-1)
+                vessel_name = ' '.join(vessel_name)
 
-    vessel_info = route.find(class_="vessel")
+    vessel_info = info_departure.find(class_="vessel")
     if vessel_info is not None:
         imo = vessel_info.find(class_="imo").text
         imo = imo.removeprefix('IMO Number')
@@ -205,10 +209,19 @@ def process_data_route(route,list_ports,route_data):
 
         # Store the information about the first used vessel as a list
         # If other vessels are also used, these will be also be stored as a list
-        vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
+        vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
+        for i in range(len(vessels)):
+            for j in range(len(vessels[i])):
+                if vessels[i][j] == '-':
+                    vessels[i][j] = 'unknown'
     else:
-        vessels.append([vessel_name])
-        #print("vessel_info is None")
+        imo = 'unknown'
+        flag = 'unknown'
+        built_year_ship = 'unknown'
+        service = 'unknown'
+        callsign = 'unknown'
+        vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
+        print("vessel_info is None")
 
     if len(list_ports)>2: # If there is a transfer, store data and also run process_data_transfer
         route_data.append([origin,destination,departure_date,arrival_date,transittime])
@@ -256,11 +269,14 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 vessel_name = vessel_name.removesuffix(' ')
             else:
                 vessel_name = vessel_name.removeprefix(' Departing on ')
-                vessel_name = vessel_name.split()
-                if len(vessel_name) >= 2 and "/" in vessel_name:
-                    vessel_name.remove("/")
-                    vessel_name.pop(-1)
-                    vessel_name = ' '.join(vessel_name)
+                if vessel_name == '':
+                    vessel_name = 'unknown'
+                if vessel_name != 'unknown':
+                    vessel_name = vessel_name.split()
+                    if len(vessel_name) >= 2 and "/" in vessel_name:
+                        vessel_name.remove("/")
+                        vessel_name.pop(-1)
+                        vessel_name = ' '.join(vessel_name)
 
             vessel_info = transfer_ship.find(class_="vessel")
 
@@ -280,10 +296,19 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 built_year_ship = vessel_info.find(class_="built").text
                 built_year_ship = built_year_ship.removeprefix('Built')
 
-                vessels.append([vessel_name,imo,service,flag,callsign,built_year_ship])
+                vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
+                for i in range(len(vessels)):
+                    for j in range(len(vessels[i])):
+                        if vessels[i][j] == '-':
+                            vessels[i][j] = 'unknown'
             else:
-                vessels.append([vessel_name])
-                #print("vessel_info is None")
+                imo = 'unknown'
+                flag = 'unknown'
+                built_year_ship = 'unknown'
+                service = 'unknown'
+                callsign = 'unknown'
+                vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
+                print("vessel_info is None")
 
     # This part is quite complicated
     # The data on the origin, destination and first vessel were already stored in route_data in process_data_route
