@@ -215,7 +215,7 @@ def process_data_route(route,list_ports,route_data):
         process_data_transfer(route,list_ports,route_data,vessels)
     else:
         # Just store the route_data
-        route_data.append([origin,destination,departure_date,arrival_date,[origin,destination],transittime,vessels,[departure_date,arrival_date]])
+        route_data.append([origin,destination,departure_date,arrival_date,transittime,[origin,destination],vessels,[departure_date,arrival_date]])
         return route_data
 
 def process_data_transfer(route,list_ports,route_data,vessels):
