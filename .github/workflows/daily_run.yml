@@ -26,7 +26,7 @@ jobs:
     - run: pip install -U selenium beautifulsoup4 pandas numpy packaging webdriver-manager
     - run: python maersk.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v4
+    - uses: peter-evans/create-pull-request@v5
       with:
         branch: "maersk-data"
         branch-suffix: "timestamp"

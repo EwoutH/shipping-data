@@ -23,7 +23,7 @@ jobs:
     - run: pip install -U pandas requests fake_useragent
     - run: python routescanner_automated_v2.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v4
+    - uses: peter-evans/create-pull-request@v5
       with:
         branch: "routescanner-data-v2"
         branch-suffix: "timestamp"
@@ -39,7 +39,7 @@ jobs:
     - run: pip install -U pandas requests
     - run: python msc_automated_v2.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v4
+    - uses: peter-evans/create-pull-request@v5
       with:
         branch: "msc-data-v2"
         branch-suffix: "timestamp"
