@@ -56,7 +56,7 @@ The MSC v2 scraper uses another method called API scrapping. It basically makes 
 - The combined pickle can be found at [`pickles/msc_v2_connections_combined.pickle`](pickles/msc_v2_connections_combined.pickle)
 
 ## Daily scraping
-[GitHub Actions](https://docs.github.com/en/actions) is used to run the scraping scripts each day. The scraped data is gathered in a [pull request](https://github.com/EwoutH/shipping-data/pulls), which can be merged.
+[GitHub Actions](https://docs.github.com/en/actions) is used to run the scraping scripts each day. The scraped data is committed directly to the [`data_staging`](https://github.com/EwoutH/shipping-data/tree/data_staging) branch. From that branch, a pull request to the main branch can be run ([Squash and merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges#squash-and-merge-your-commits) to prevent a huge list of commits), after which the scripts to merge the dataframes can be ran.
 
 ## Other scripts
 - [`scripts/combine_all.ipynb`](scripts/combine_all.ipynb) contains a script to merge dataframe from multiple scrapers. It takes the combined dataframes from the different scrapers as inputs, and outputs a dataframe as pickle to [`pickles/all_connections_combined.pickle`](pickles/all_connections_combined.pickle).
