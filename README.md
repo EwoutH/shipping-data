@@ -48,6 +48,19 @@ The Maersk scraper used the point to point function on the site https://www.maer
 The Maersk scraper sometimes doesn't provide a route between origin and destination, even though the route actually exists. Errors from this issue have been prevented.
 If the daily run doesn't find a route, another daily run will find it. Reason for this is that all routes are not daily routes. Therefore the routes can be found on the site for multiple days and therefore be scraped.
 
+### MSC v2 scraper
+The MSC v2 scraper uses another method called API scrapping. It basically makes an API call to the internal API MSC also uses to load the data from their website. The biggest advantage is that is has way less overhead (websites don't need te be loaded) and is thus faster. The data also is gathered in a more structured way.
+- The scraper itself is at [`webscrapers/msc_automated_v2.py`](webscrapers/msc_automated_v2.py)
+- Data pickles are stored in [`pickles/msc_daily_v2`](pickles/msc_daily_v2)
+- A script to merge the daily dataframes to a single dataframe [`msc_v2.ipynb`](scripts/msc_v2.ipynb)
+- The combined pickle can be found at [`pickles/msc_v2_connections_combined.pickle`](pickles/msc_v2_connections_combined.pickle)
+
+## Daily scraping
+[GitHub Actions](https://docs.github.com/en/actions) is used to run the scraping scripts each day. The scraped data is gathered in a [pull request](https://github.com/EwoutH/shipping-data/pulls), which can be merged.
+
+## Other scripts
+- [`scripts/combine_all.ipynb`](scripts/combine_all.ipynb) contains a script to merge dataframe from multiple scrapers. It takes the combined dataframes from the different scrapers as inputs, and outputs a dataframe as pickle to [`pickles/all_connections_combined.pickle`](pickles/all_connections_combined.pickle).
+
 ## License
 As for now, all code in this repository is licensed under the GPL-3.0 license. At a later moment in this project this may change to a more permissive license.
 
