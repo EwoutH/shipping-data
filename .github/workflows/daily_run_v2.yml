@@ -23,12 +23,11 @@ jobs:
     - run: pip install -U pandas requests fake_useragent
     - run: python routescanner_automated_v2.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v5
+    - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        base: "data_staging"  
-        branch: "routescanner-data-v2"
-        branch-suffix: "timestamp"
-        title: "Add Routescanner v2 data"
+        branch: "data_staging"  
+        commit_options: '--signoff'
+        commit_message: "Add Routescanner v2 data"
 
   msc-v2:
     runs-on: ubuntu-latest
@@ -40,9 +39,8 @@ jobs:
     - run: pip install -U pandas requests
     - run: python msc_automated_v2.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v5
+    - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        base: "data_staging"
-        branch: "msc-data-v2"
-        branch-suffix: "timestamp"
-        title: "Add MSC v2 data"
+        branch: "data_staging"  
+        commit_options: '--signoff'
+        commit_message: "Add MSC v2 data"

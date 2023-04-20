@@ -26,9 +26,8 @@ jobs:
     - run: pip install -U selenium beautifulsoup4 pandas numpy packaging webdriver-manager
     - run: python maersk.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v5
+    - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        base: "data_staging"
-        branch: "maersk-data"
-        branch-suffix: "timestamp"
-        title: "Add Maersk data"
+        branch: "data_staging"  
+        commit_options: '--signoff'
+        commit_message: "Add Maersk data"
