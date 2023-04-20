@@ -19,12 +19,13 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
     - run: pip install -U pandas requests fake_useragent
     - run: python routescanner_automated_v2.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v4
+    - uses: peter-evans/create-pull-request@v5
       with:
+        base: "data_staging"  
         branch: "routescanner-data-v2"
         branch-suffix: "timestamp"
         title: "Add Routescanner v2 data"
@@ -35,12 +36,13 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
     - run: pip install -U pandas requests
     - run: python msc_automated_v2.py
       working-directory: ./webscrapers
-    - uses: peter-evans/create-pull-request@v4
+    - uses: peter-evans/create-pull-request@v5
       with:
+        base: "data_staging"
         branch: "msc-data-v2"
         branch-suffix: "timestamp"
         title: "Add MSC v2 data"
