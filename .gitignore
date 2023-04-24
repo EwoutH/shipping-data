@@ -1,6 +1,10 @@
 # PyCharm .idea files
 .idea/
 
+# Too large files
+pickles/*_combined.pickle
+data/*_combined.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
