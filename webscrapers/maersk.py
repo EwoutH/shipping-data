@@ -10,6 +10,7 @@ import pandas as pd
 import itertools
 from datetime import date
 from datetime import datetime
+import os
 
 # Some definitions in explanation of the code:
 # Connection: ALl possibilities from the origin port to the destination port
@@ -18,7 +19,7 @@ from datetime import datetime
 
 #sets up the options of the chromedriver
 opts = Options()
-opts.add_argument("window-size=1280,720") #locks the window size
+opts.add_argument("window-size=1280,720") #locks the window size !!Don't change!!
 opts.add_argument("user-agent=Chrome/106.0.5249.119") #Prevents sites from blocking traffic
 headless = True
 
@@ -42,16 +43,19 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 # Using both the port name according to the list above and the latitude and longitude
 #!!! Instructions on port selection end
 
-o_names = ["Arica, Chile","Belem (Para), Brazil","Buenaventura (Valle Del Cauca), Colombia","Buenos Aires (Buenos Aires), Argentina","Asuncion, Paraguay","Pilar, Paraguay","Callao, Peru","Campana (Buenos Aires), Argentina","Cartagena (Bolivar), Colombia","Coronel, Chile","Da Nang (Da Nang), Vietnam","Encarnacion, Paraguay","Georgetown, Guyana","Guayaquil, Ecuador","Haiphong (Hai Phong), Vietnam","Ho Chi Minh city - ICD Phuoc Long (Ho Chi Minh), Vietnam","Iquique, Chile","Itajai (Santa Catarina), Brazil","Itapoa (Santa Catarina), Brazil","Sihanoukville, Cambodia","La Guaira, Venezuela","Lirquen, Chile","Manaus (Amazonas), Brazil","Montevideo, Uruguay","Navegantes (Santa Catarina), Brazil","Nueva Palmira, Uruguay","Paita, Peru","Paramaribo, Suriname","Paranagua (Parana), Brazil","Pecem (Ceara), Brazil","Phnom Penh, Cambodia","Porto Velho (Rondonia), Brazil","Posorja - Guayas, Ecuador","Puerto Angamos, Chile","Puerto Bolivar - El Oro, Ecuador","Puerto Cabello, Venezuela","Villeta, Paraguay","Qui Nhon (Binh Dinh), Vietnam","Rio de Janeiro (Rio de Janeiro), Brazil","Rio Grande (Rio Grande do Sul), Brazil","Rosario (Santa Fe), Argentina","Salvador (Bahia), Brazil","San Antonio, Chile","San Vicente, Chile","Santarem (Para), Brazil","Santos (Sao Paulo), Brazil","Suape (Pernambuco), Brazil","Terport, Paraguay","Turbo (Antioquia), Colombia","Ushuaia (Tierra del Fuego), Argentina","Valparaiso, Chile","Vila do Conde (Para), Brazil","Vitoria (Espirito Santo), Brazil","Vung Tau (Ba Ria - Vung Tau), Vietnam","ZARATE (Buenos Aires), Argentina"]
+origins_destinations = pd.read_csv(r'../utils/maersk_un_locodes_conversion.csv',sep=';')
+o_names = origins_destinations.loc[origins_destinations['origin/destination'] == 'origin'].Maersk_name
+d_names = origins_destinations.loc[origins_destinations['origin/destination'] == 'destination'].Maersk_name
+
+od_names = list(itertools.product(o_names, d_names))
+
 # Puerto seguro flavial has been moved to villeta. This place seemed more logical according to lat and long
 # Terport villeta paraguay had no latitude or longitude to check,
 # But luckily there was only one port called Terport in Maersk
 
-d_names = ["Amsterdam (Noord-Holland), Netherlands","Antwerp (Antwerp), Belgium","Moerdijk (Noord-Brabant), Netherlands","Rotterdam (Zuid-Holland), Netherlands","Vlissingen (Zeeland), Netherlands","Zeebrugge (West Flanders), Belgium"]
+today = date.today()
 
-od_names = list(itertools.product(o_names, d_names))
-
-def open_routes():
+def open_routes(od,page):
     # All if statements check if a route has been found
     # First button can already be clicked because that was already checked before opening this process
     driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span").click()
@@ -65,19 +69,26 @@ def open_routes():
 
                 if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[7]/div/div[4]/button/span")) > 0:
                     driver.find_element(By.XPATH, "//*[@id='app']/div[2]/div[1]/div[7]/div/div[4]/button/span").click()
-    soup_page() # Soup the page
+    soups.append(soup_page()) # Soup the page
+    save_html_page(od,page)
+
+def save_html_page(od,page):
+    if not os.path.exists(f'../data/maersk_daily/html_runs/{today}'):
+        os.makedirs(f'../data/maersk_daily/html_runs/{today}')
+    with open(f'../data/maersk_daily/html_runs/{today}/{od}_{page}_{today}.html', "w", encoding="utf-8") as file:
+        file.write(str(soup_page()))
 
 def soup_page():
     #Soup the page
     page_source = driver.page_source
     soup = BeautifulSoup(page_source)
-    soups.append(soup)
+    return soup
 
 ### This part fills in all the origin destination locations and saves the soup which will be processed later on
 soups = []
 
 def open_webpages(od_names):
-    #print(f"Starting to scrape {len(od_names)} harbor combinations.")
+    print(f"Starting to scrape {len(od_names)} harbor combinations.")
     #Open Maersk point to point site
     driver.get("https://www.maersk.com/schedules/pointToPoint")
     time.sleep(3)
@@ -123,16 +134,18 @@ def open_webpages(od_names):
         # It works by checking if the first button for 'show route details' can be clicked. If not, no route has been found
         time.sleep(5)
         if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span")) > 0:
-            open_routes() #Expand all the show route details buttons
+            open_routes(od=i,page=1) #Expand all the show route details buttons
             time.sleep(5)
             if len(driver.find_elements(By.CLASS_NAME,"load-more__text")) > 0: #Check if even more routes have been found than just appearing on the first page
                 driver.find_elements(By.CLASS_NAME,"load-more__text")[1].click() #Click to open second page with routes
                                                                                  # 'Earlier sailings' and 'Later sailings' have same class. We want to click 'Later sailings'
                 time.sleep(5) #Make sure that all buttons can open
                 if len(driver.find_elements(By.XPATH,"//*[@id='app']/div[2]/div[1]/div[3]/div/div[4]/button/span")) > 0:
-                    open_routes() #if statement above is not necessarily needed. It checks again if at least 1 route can be found.
+                    open_routes(od=i,page=2) #if statement above is not necessarily needed. It checks again if at least 1 route can be found.
                                   # That should be the case because we are on the second page of routes. More of a failsafe.
-        #In the notebook something will be printed here in an else:
+            print(f"Done with {i}")
+        else:
+            print("No route found for:",i)
 
     #Closes the webdriver after a few seconds
     driver.stop_client()
@@ -158,13 +171,17 @@ def process_data_route(route,list_ports,route_data):
     # This means that the line below will find only the departure from the origin, not from other transfer departures
     # as it is the first departure that can be found
     info_departure = route.find(class_="ptp-results__transport-plan--item")
-    info_departure = info_departure.find(class_="transport-label font--small")
+    info_departure_and_ship = info_departure.find(class_="transport-label font--small")
 
-    departure_date = info_departure.find(class_="font--small").text
+    departure_date = info_departure_and_ship.find(class_="font--small").text
 
-    departure_date = datetime.strptime(departure_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
+    departure_date = datetime.strptime(departure_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to a datetime object: "2023-03-04 10:00"
 
     transittime = arrival_date - departure_date
+
+    departure_date = departure_date.strftime("%Y-%m-%d %H:%M:%S") # Converting datetime object to string according to "2023-03-04 10:00:00"
+
+    arrival_date = arrival_date.strftime("%Y-%m-%d %H:%M:%S") # Converting datetime object to string according to "2023-03-04 10:00:00"
 
     # Make an empty list for all used vessels. If only 1 vessel is used only 1 item will be in this list
     vessels = []
@@ -173,7 +190,7 @@ def process_data_route(route,list_ports,route_data):
     # Either 2 things can occur: ' Departing on [shipname]' or ' Transport via barge '
     # If a ship is used, the shipname will be stored
     # If barge is used, 'barge' will be stored (literally)
-    vessel_name = info_departure.find(class_="rich-text").text
+    vessel_name = info_departure_and_ship.find(class_="rich-text").text
     if vessel_name[:13] != ' Departing on': #If false: vessel_name probably starts with: ' Transport via barge'
         vessel_name = vessel_name.removeprefix(' Transport via ')
         vessel_name = vessel_name.removesuffix(' ')
@@ -191,6 +208,7 @@ def process_data_route(route,list_ports,route_data):
                 vessel_name = ' '.join(vessel_name)
 
     vessel_info = info_departure.find(class_="vessel")
+
     if vessel_info is not None:
         imo = vessel_info.find(class_="imo").text
         imo = imo.removeprefix('IMO Number')
@@ -209,26 +227,29 @@ def process_data_route(route,list_ports,route_data):
 
         # Store the information about the first used vessel as a list
         # If other vessels are also used, these will be also be stored as a list
-        vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
+        vessels.append({'vessel_name': vessel_name,'imo': imo,'flag': flag,'build_year_ship' : built_year_ship,'service': service,'callsign': callsign})
         for i in range(len(vessels)):
-            for j in range(len(vessels[i])):
-                if vessels[i][j] == '-':
-                    vessels[i][j] = 'unknown'
+                for key, value in vessels[i].items():
+                    if vessels[i][key] == '-':
+                        vessels[i][key] = ''
     else:
-        imo = 'unknown'
-        flag = 'unknown'
-        built_year_ship = 'unknown'
-        service = 'unknown'
-        callsign = 'unknown'
-        vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
-        print("vessel_info is None")
+        imo = ''
+        flag = ''
+        built_year_ship = ''
+        service = ''
+        callsign = ''
+        vessels.append({'vessel_name': vessel_name,'imo': imo,'flag': flag,'build_year_ship' : built_year_ship,'service': service,'callsign': callsign})
 
     if len(list_ports)>2: # If there is a transfer, store data and also run process_data_transfer
         route_data.append([origin,destination,departure_date,arrival_date,transittime])
         process_data_transfer(route,list_ports,route_data,vessels)
     else:
+        # Adding the information about the leg in a dictionary.
+        legs = {}
+        legs['1'] = {'OriginName': origin, 'DestinationName': destination,'Vessel': vessels[0],
+                                                        'EstimatedDepartureTime': departure_date, 'EstimatedArrivalTime': arrival_date}
         # Just store the route_data
-        route_data.append([origin,destination,departure_date,arrival_date,transittime,[origin,destination],vessels,[departure_date,arrival_date]])
+        route_data.append([origin,destination,departure_date,arrival_date,transittime,[origin,destination],vessels,[departure_date,arrival_date],legs])
         return route_data
 
 def process_data_transfer(route,list_ports,route_data,vessels):
@@ -249,7 +270,9 @@ def process_data_transfer(route,list_ports,route_data,vessels):
 
             arrival_date = info_arrival.find_all(class_="font--small")[1].text
 
-            arrival_date = datetime.strptime(arrival_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
+            arrival_date = datetime.strptime(arrival_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to a datetime object: "2023-03-04 10:00"
+
+            arrival_date = arrival_date.strftime("%Y-%m-%d %H:%M:%S") # Converting datetime object to string according to "2023-03-04 10:00:00"
 
             transfer_arrival_departure.append(arrival_date)
 
@@ -258,7 +281,9 @@ def process_data_transfer(route,list_ports,route_data,vessels):
             info_departure = transfer_ship.find(class_="transport-label font--small")
             departure_date = info_departure.find(class_="font--small").text
 
-            departure_date = datetime.strptime(departure_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to "2023-03-04 10:00"
+            departure_date = datetime.strptime(departure_date,"%d %b %Y %H:%M") #converts date from format "04 March 2023 10:00" to a datetime object: "2023-03-04 10:00"
+
+            departure_date = departure_date.strftime("%Y-%m-%d %H:%M:%S") # Converting datetime object to string according to "2023-03-04 10:00:00"
 
             transfer_arrival_departure.append(departure_date)
 
@@ -296,19 +321,20 @@ def process_data_transfer(route,list_ports,route_data,vessels):
                 built_year_ship = vessel_info.find(class_="built").text
                 built_year_ship = built_year_ship.removeprefix('Built')
 
-                vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
+                vessels.append({'vessel_name': vessel_name,'imo': imo,'flag': flag,'build_year_ship' : built_year_ship,'service': service,'callsign': callsign})
+
                 for i in range(len(vessels)):
-                    for j in range(len(vessels[i])):
-                        if vessels[i][j] == '-':
-                            vessels[i][j] = 'unknown'
+                    for key, value in vessels[i].items():
+                        if vessels[i][key] == '-':
+                            vessels[i][key] = ''
+
             else:
-                imo = 'unknown'
-                flag = 'unknown'
-                built_year_ship = 'unknown'
-                service = 'unknown'
-                callsign = 'unknown'
-                vessels.append([vessel_name,imo,flag,built_year_ship,service,callsign])
-                print("vessel_info is None")
+                imo = ''
+                flag = ''
+                built_year_ship = ''
+                service = ''
+                callsign = ''
+                vessels.append({'vessel_name': vessel_name,'imo': imo,'flag': flag,'build_year_ship' : built_year_ship,'service': service,'callsign': callsign})
 
     # This part is quite complicated
     # The data on the origin, destination and first vessel were already stored in route_data in process_data_route
@@ -330,6 +356,15 @@ def process_data_transfer(route,list_ports,route_data,vessels):
     route_data[-1].append(vessels)
     # Store the data on all departure and arrival dates (including transfer) in the route_data
     route_data[-1].append(arrival_departure)
+
+    # Adding the information about the leg in a dictionary.
+    legs = {}
+    for leg in range(len(list_ports)-1):
+        legs[f'{leg+1}'] = {'OriginName': list_ports[leg], 'DestinationName': list_ports[leg+1],'Vessel': vessels[leg],
+                                                        'EstimatedDepartureTime': arrival_departure[leg*2], 'EstimatedArrivalTime': arrival_departure[leg*2+1]}
+
+    route_data[-1].append(legs)
+
     return route_data
 
 ### Process_data_route, process_data_transfer and initialize_processing
@@ -366,16 +401,24 @@ def initialize_processing(soups):
 initialize_processing(soups)
 
 # This turns the processed data into a Pandas dataframe
-columns = ["Origin","Destination","LocalEstimatedDepartureTime","LocalEstimatedArrivalTime","EstimatedTotalTransitTimeDays","Ports","Vessels","Dates"]
+columns = ["OriginName","DestinationName","EstimatedDepartureTime","EstimatedArrivalTime","EstimatedTotalTransitTimeDays","Ports","Vessels","Dates","Legs"]
 
 connection_df = pd.DataFrame(route_data, columns=columns)
+connection_df["Origin"] = connection_df["OriginName"]
+connection_df["Destination"] = connection_df["DestinationName"]
 connection_df["ScrapingDate"] = date.today()
 connection_df["ScrapingSite"] = "Maersk"
+connection_df["EstimatedTotalTransitTimeHours"] = ""
+connection_df["TotalCO2EmissionsKg"] = ""
+connection_df["TotalDistanceMeters"] = ""
+connection_df["CutOffs"] = ""
+connection_df["NumberOfLegs"] = ""
 connection_df["EstimatedTotalTransitTimeDays"] = connection_df.EstimatedTotalTransitTimeDays.round('d')
 
-#display(connection_df)
+# Changing the order of the Dataframe. Makes analysing the dataframe by hand easier. Has no effect on actual dataframe operations
+v2_connection_df = connection_df[['ScrapingDate','ScrapingSite','Origin','Destination','OriginName','DestinationName','EstimatedDepartureTime','EstimatedArrivalTime','EstimatedTotalTransitTimeDays','EstimatedTotalTransitTimeHours','TotalCO2EmissionsKg','TotalDistanceMeters','CutOffs','NumberOfLegs','Legs']]
+
 
 # Store as both pickle and CSV
-today = date.today()
-connection_df.to_pickle(f"../pickles/maersk_daily/pickles_before_merge/connections_{today}.pickle")
-connection_df.to_csv(f"../data/maersk_daily/csv_runs/connections_{today}.csv")
+v2_connection_df.to_pickle(f"../pickles/maersk_daily/pickles_before_merge/connections_{today}.pickle")
+v2_connection_df.to_csv(f"../data/maersk_daily/csv_runs/connections_{today}.csv")
