@@ -1,11 +1,11 @@
 import pandas as pd
 import os
 
-dir_path = '..\pickles\maersk_daily\pickles_before_merge'
+dir_path = '../pickles/maersk_daily/pickles_before_merge'
 files = os.listdir(dir_path) # lists all file_names in the folder
 
 # Read first DataFrame from Pickle
-comb_df = pd.read_pickle(f'..\pickles\maersk_daily\pickles_before_merge\{files[0]}')
+comb_df = pd.read_pickle(f'../pickles/maersk_daily/pickles_before_merge/{files[0]}')
 l0 = len(comb_df.index)
 # Print stats
 print('Starting with dataframe',files[0],'with', (len(comb_df.index)), 'rows')
@@ -16,7 +16,7 @@ if len(files)>1:
         # Save the current number of rows
         l1 = len(comb_df.index)
         # Load the new dataframe from pickle
-        new_df = pd.read_pickle(f'..\pickles\maersk_daily\pickles_before_merge\{file}')
+        new_df = pd.read_pickle(f'../pickles/maersk_daily/pickles_before_merge/{file}')
         l2 = len(new_df.index)
         # Combine the two dataframes
         comb_df = pd.concat([comb_df, new_df], ignore_index=True)
