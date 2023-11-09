@@ -23,7 +23,7 @@ jobs:
     - run: pip install -U pandas requests fake_useragent
     - run: python routescanner_automated_v2.py
       working-directory: ./webscrapers
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - uses: stefanzweifel/git-auto-commit-action@v5
       with:
         branch: "data_staging"  
         commit_options: '--signoff'
@@ -39,7 +39,7 @@ jobs:
     - run: pip install -U pandas requests
     - run: python msc_automated_v2.py
       working-directory: ./webscrapers
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - uses: stefanzweifel/git-auto-commit-action@v5
       with:
         branch: "data_staging"  
         commit_options: '--signoff'
