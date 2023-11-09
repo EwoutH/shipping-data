@@ -26,7 +26,7 @@ jobs:
     - run: pip install -U selenium beautifulsoup4 pandas numpy packaging webdriver-manager
     - run: python maersk.py
       working-directory: ./webscrapers
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - uses: stefanzweifel/git-auto-commit-action@v5
       with:
         branch: "data_staging"  
         commit_options: '--signoff'
