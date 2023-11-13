@@ -3,8 +3,8 @@
 
 name: Scrape Routescanner and MSC daily (v2)
 on:
-  schedule:
-    - cron: '0 5 * * *'
+  #schedule:
+  #   - cron: '0 5 * * *'
   push:
     paths:
      - ".github/workflows/daily_run_v2.yml"

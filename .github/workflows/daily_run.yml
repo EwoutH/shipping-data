@@ -4,8 +4,8 @@
 name: Scrape Maersk daily
 on:
   # Disabled because Routescanner v1 is broken, and MSC v1 is redundant (replaced by v2)
-  schedule:
-    - cron: '0 6 * * *'
+  #schedule:
+  #  - cron: '0 6 * * *'
   push:
     paths:
      - ".github/workflows/daily_run.yml"
